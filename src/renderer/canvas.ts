@@ -5,6 +5,13 @@ export class Canvas {
   public context: CanvasRenderingContext2D;
   constructor(context: CanvasRenderingContext2D) {
     this.context = context;
+
+    this.context.save();
+
+    this.context.fillStyle = `rgb(255, 255, 255)`;
+    this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+
+    this.context.restore();
   }
 
   /**
@@ -26,13 +33,14 @@ export class Canvas {
     this.context.restore();
   };
 
-  /**
-   * 缩放
-   *
-   * @param x
-   * @param y
-   */
-  scale = (x: number, y: number) => {};
+  setBackground = () => {
+    this.context.save();
+
+    this.context.fillStyle = `#000000`;
+    this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+
+    this.context.restore();
+  };
 
   clear = () => {
     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);

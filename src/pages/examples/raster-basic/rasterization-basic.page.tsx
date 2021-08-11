@@ -17,14 +17,27 @@ const HEIGHT = 800;
 export default function BasicRasterizationPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [options, setOptions] = useState({ z_rotate_angle: 0, anti_alias: 0, pixel_size: 1, eye_fov: 45, z_near: -1, z_far: -50 });
+  const [options, setOptions] = useState({
+    x_rotate_angle: 0,
+    y_rotate_angle: 0,
+    z_rotate_angle: 0,
+    anti_alias: 0,
+    pixel_size: 1,
+    eye_fov: 45,
+    z_near: -1,
+    z_far: -50
+  });
 
-  useHotkeys('a', () => setOptions({ ...options, z_rotate_angle: options.z_rotate_angle - 10 }), [options]);
-  useHotkeys('d', () => setOptions({ ...options, z_rotate_angle: options.z_rotate_angle + 10 }), [options]);
+  useHotkeys('A', () => setOptions({ ...options, y_rotate_angle: options.y_rotate_angle - 10 }), [options]);
+  useHotkeys('d', () => setOptions({ ...options, y_rotate_angle: options.y_rotate_angle + 10 }), [options]);
+  useHotkeys('w', () => setOptions({ ...options, x_rotate_angle: options.x_rotate_angle - 10 }), [options]);
+  useHotkeys('s', () => setOptions({ ...options, x_rotate_angle: options.x_rotate_angle + 10 }), [options]);
+  useHotkeys('q', () => setOptions({ ...options, z_rotate_angle: options.z_rotate_angle - 10 }), [options]);
+  useHotkeys('e', () => setOptions({ ...options, z_rotate_angle: options.z_rotate_angle + 10 }), [options]);
 
   useEffect(() => {
     startRender();
-  }, [options.z_rotate_angle]);
+  }, [options.z_rotate_angle, options.y_rotate_angle, options.x_rotate_angle]);
 
   /**
    * 开始绘制
@@ -48,17 +61,28 @@ export default function BasicRasterizationPage() {
       [3.5, -1, -5],
       [2.5, 1.5, -5],
       [-1, 0.5, -5],
-
       [1, 0, -1],
       [0, 4, -4],
       [-2, 0, -7]
     ];
+
+    // [
+    //   [2, 0, -2],
+    //   [0, 2, -2],
+    //   [-2, 0, -2],
+    //   [0, 0, -4]
+    // ];
     // 组成三角形关系
     const inds = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8]
     ];
+    // [
+    //   [0, 1, 2],
+    //   [0, 2, 3],
+    //   [1, 2, 3],
+    // ];
     // 每个点的颜色
     const cols = [
       [185, 217, 238],
@@ -74,14 +98,13 @@ export default function BasicRasterizationPage() {
 
     const eye_fov = options.eye_fov;
     const eye_pos = new Vector3(0, 0, 5);
-    const z_rotate_angle = options.z_rotate_angle;
     const z_near = options.z_near;
     const z_far = options.z_far;
     const aspect_ratio = 1;
 
     const projection = get_projection_matrix(eye_fov, aspect_ratio, z_near, z_far);
     const view = getViewMatrix(eye_pos);
-    const model = getModelMatrix(z_rotate_angle);
+    const model = getModelMatrix(options.z_rotate_angle, options.y_rotate_angle, options.x_rotate_angle);
 
     const mvp = projection.multiply(view).multiply(model);
 
@@ -301,7 +324,9 @@ export default function BasicRasterizationPage() {
         </div>
         <br />
         <br />
-        <div>A: Left Rotation，D: Right Rotation</div>
+        <div>x 轴旋转：W, S</div>
+        <div>y 轴旋转：A, D</div>
+        <div>z 轴旋转：Q, E</div>
       </div>
     </div>
   );
@@ -310,19 +335,40 @@ export default function BasicRasterizationPage() {
 /**
  * 获取模型矩阵 - 也就是变换矩阵
  */
-const getModelMatrix = (rotation_angle: number) => {
-  const rad_angle = rotation_angle * DEG_TO_RAD;
-  const cos_value = Math.cos(rad_angle);
-  const sin_value = Math.sin(rad_angle);
-
+const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: number, x_rotation_angle: number) => {
+  const z_rad_angle = z_rotation_angle * DEG_TO_RAD;
+  const z_cos_value = Math.cos(z_rad_angle);
+  const z_sin_value = Math.sin(z_rad_angle);
   const rotateByZMatrix = Matrix.createBy2dArray([
-    [cos_value, -sin_value, 0, 0],
-    [sin_value, cos_value, 0, 0],
+    [z_cos_value, -z_sin_value, 0, 0],
+    [z_sin_value, z_cos_value, 0, 0],
     [0, 0, 1, 0],
     [0, 0, 0, 1]
   ]);
 
-  return rotateByZMatrix;
+  const y_rad_angle = y_rotation_angle * DEG_TO_RAD;
+  const y_cos_value = Math.cos(y_rad_angle);
+  const y_sin_value = Math.sin(y_rad_angle);
+  const rotateByYMatrix = Matrix.createBy2dArray([
+    [y_cos_value, 0, y_sin_value, 0],
+    [0, 1, 0, 0],
+    [-y_sin_value, 0, y_cos_value, 0],
+    [0, 0, 0, 1]
+  ]);
+
+  const x_rad_angle = x_rotation_angle * DEG_TO_RAD;
+  const x_cos_value = Math.cos(x_rad_angle);
+  const x_sin_value = Math.sin(x_rad_angle);
+  const rotateByXMatrix = Matrix.createBy2dArray([
+    [1, 0, 0, 0],
+    [0, x_cos_value, -x_sin_value, 0],
+    [0, x_sin_value, x_cos_value, 0],
+    [0, 0, 0, 1]
+  ]);
+
+  console.log(x_rotation_angle, y_rotation_angle, z_rotation_angle);
+
+  return rotateByXMatrix.multiply(rotateByYMatrix).multiply(rotateByZMatrix);
 };
 
 /**
