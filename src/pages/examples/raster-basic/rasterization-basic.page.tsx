@@ -153,8 +153,6 @@ export default function BasicRasterizationPage() {
             if (count > 0) {
               const [alpha, beta, gamma] = computeBarycentric2D(i, j, triangle.v);
 
-              // const x = i + width / 2;
-              // const y = -j + height / 2;
               const x = i;
               const y = height - j;
 
@@ -177,8 +175,6 @@ export default function BasicRasterizationPage() {
             if (triangle.isInside(i, j)) {
               const [alpha, beta, gamma] = computeBarycentric2D(i, j, triangle.v);
 
-              // const x = i + width / 2;
-              // const y = -j + height / 2;
               const x = i;
               const y = height - j;
 
@@ -418,13 +414,6 @@ const get_projection_matrix = (eye_fov: number, aspect_ratio: number, zNear: num
     [0, 0, 0, 1]
   ]);
   const ortho = o1.multiply(o2);
-
-  // const ortho = Matrix.createBy2dArray([
-  //   [2 / right_to_left, 0, 0, 0],
-  //   [0, 2 / top_to_bottom, 0, 0],
-  //   [0, 0, 2 / near_to_far, -(zNear + zFar) / near_to_far],
-  //   [0, 0, 0, 1]
-  // ]);
 
   // 透视转为正交的矩阵
   const persp_to_ortho = Matrix.createBy2dArray([
