@@ -17,17 +17,19 @@ const HEIGHT = 800;
 export default function BasicRasterizationPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [options, setOptions] = useState({
+  const [options, setOptions] = useState<any>({
     x_rotate_angle: 0,
     y_rotate_angle: 0,
     z_rotate_angle: 0,
     anti_alias: 0,
     pixel_size: 1,
     eye_fov: 45,
-    z_near: -1,
-    z_far: -50
+    z_near: -0.1,
+    z_far: -50,
+    objects: objectsArray[0]
   });
 
+  // 旋转快捷键
   useHotkeys('A', () => setOptions({ ...options, y_rotate_angle: options.y_rotate_angle - 10 }), [options]);
   useHotkeys('d', () => setOptions({ ...options, y_rotate_angle: options.y_rotate_angle + 10 }), [options]);
   useHotkeys('w', () => setOptions({ ...options, x_rotate_angle: options.x_rotate_angle - 10 }), [options]);
@@ -54,47 +56,11 @@ export default function BasicRasterizationPage() {
     const height = HEIGHT / options.pixel_size;
 
     // 空间中点坐标定义
-    const vecs = [
-      [2, 0, -2],
-      [0, 2, -2],
-      [-2, 0, -2],
-      [3.5, -1, -5],
-      [2.5, 1.5, -5],
-      [-1, 0.5, -5],
-      [1, 0, -1],
-      [0, 4, -4],
-      [-2, 0, -7]
-    ];
-
-    // [
-    //   [2, 0, -2],
-    //   [0, 2, -2],
-    //   [-2, 0, -2],
-    //   [0, 0, -4]
-    // ];
+    const vecs = options.objects.vecs;
     // 组成三角形关系
-    const inds = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8]
-    ];
-    // [
-    //   [0, 1, 2],
-    //   [0, 2, 3],
-    //   [1, 2, 3],
-    // ];
+    const inds = options.objects.inds;
     // 每个点的颜色
-    const cols = [
-      [185, 217, 238],
-      [185, 217, 238],
-      [185, 217, 238],
-      [217, 238, 185],
-      [217, 238, 185],
-      [217, 238, 185],
-      [66, 135, 245],
-      [66, 135, 245],
-      [66, 135, 245]
-    ];
+    const cols = options.objects.cols;
 
     const eye_fov = options.eye_fov;
     const eye_pos = new Vector3(0, 0, 5);
@@ -114,11 +80,13 @@ export default function BasicRasterizationPage() {
     const frameBuffer = [];
     const z_buffer: number[] = [];
 
-    for (let ind of inds) {
+    for (let m = 0; m < inds.length; m++) {
+      const ind = inds[m];
       // 普通的点转换为齐次坐标的点
       const v0 = [...vecs[ind[0]], 1];
       const v1 = [...vecs[ind[1]], 1];
       const v2 = [...vecs[ind[2]], 1];
+      console.log(v0, v1, v2);
 
       // mvp变换
       const v00 = mvp.multiplyPoint(v0);
@@ -137,8 +105,8 @@ export default function BasicRasterizationPage() {
 
       // 视口变换 - 把 [-1, 1] 的标准立方体变换到 指定长宽 [w, h] 的屏幕中
       for (let v of vs) {
-        v[0] = 0.5 * width * v[0];
-        v[1] = 0.5 * height * v[1];
+        v[0] = 0.5 * width * (v[0] + 1);
+        v[1] = 0.5 * height * (v[1] + 1);
         v[2] = v[2] * f1 + f2;
       }
 
@@ -147,7 +115,7 @@ export default function BasicRasterizationPage() {
       const t1 = Vector3.createByArray(vs[1]);
       const t2 = Vector3.createByArray(vs[2]);
 
-      const colors = [cols[ind[0]], cols[ind[1]], cols[ind[2]]].map((c) => Vector3.createByArray(c));
+      const colors = [cols[m], cols[m], cols[m]].map((c) => Vector3.createByArray(c));
 
       const triangle = new Triangle([t0, t1, t2], colors);
 
@@ -185,8 +153,10 @@ export default function BasicRasterizationPage() {
             if (count > 0) {
               const [alpha, beta, gamma] = computeBarycentric2D(i, j, triangle.v);
 
-              const x = i + width / 2;
-              const y = -j + height / 2;
+              // const x = i + width / 2;
+              // const y = -j + height / 2;
+              const x = i;
+              const y = height - j;
 
               const w = 1 / (alpha + beta + gamma);
               let z_interpolated = alpha * triangle.v0.z + beta * triangle.v1.z + gamma * triangle.v2.z;
@@ -207,8 +177,10 @@ export default function BasicRasterizationPage() {
             if (triangle.isInside(i, j)) {
               const [alpha, beta, gamma] = computeBarycentric2D(i, j, triangle.v);
 
-              const x = i + width / 2;
-              const y = -j + height / 2;
+              // const x = i + width / 2;
+              // const y = -j + height / 2;
+              const x = i;
+              const y = height - j;
 
               const w = 1 / (alpha + beta + gamma);
               let z_interpolated = alpha * triangle.v0.z + beta * triangle.v1.z + gamma * triangle.v2.z;
@@ -218,10 +190,7 @@ export default function BasicRasterizationPage() {
 
               const oldDepth = z_buffer[ind];
 
-              if (oldDepth === undefined) {
-                frameBuffer[ind] = triangle.colors[0].coord;
-                z_buffer[ind] = z_interpolated;
-              } else if (oldDepth < z_interpolated) {
+              if (oldDepth === undefined || oldDepth < z_interpolated) {
                 frameBuffer[ind] = triangle.colors[0].coord;
                 z_buffer[ind] = z_interpolated;
               }
@@ -241,6 +210,7 @@ export default function BasicRasterizationPage() {
       }
     }
 
+    console.log(vecs);
     console.log('render finished !');
   };
 
@@ -284,6 +254,28 @@ export default function BasicRasterizationPage() {
     setOptions({ ...options, eye_fov });
   };
 
+  /**
+   *
+   * @param type
+   */
+  const change_scene = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const type = e.target.value;
+    switch (type) {
+      case '1':
+        setOptions({
+          ...options,
+          objects: objectsArray[0]
+        });
+        break;
+      case '2':
+        setOptions({
+          ...options,
+          objects: objectsArray[1]
+        });
+        break;
+    }
+  };
+
   return (
     <div style={{ background: 'white', width: 'fit-content', margin: '10px 0px 0px 10px' }}>
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
@@ -313,6 +305,13 @@ export default function BasicRasterizationPage() {
                 <option value="2">MSAA 4x</option>
                 <option value="4">MSAA 8x</option>
                 <option value="8">MSAA 16x</option>
+              </select>
+            </FormItem>
+            <FormItem label="Scene">
+              <select onChange={change_scene}>
+                <option value="1">三角形</option>
+                <option value="2">三角锥</option>
+                {/* <option value="3">MSAA 16x</option> */}
               </select>
             </FormItem>
           </form>
@@ -420,6 +419,13 @@ const get_projection_matrix = (eye_fov: number, aspect_ratio: number, zNear: num
   ]);
   const ortho = o1.multiply(o2);
 
+  // const ortho = Matrix.createBy2dArray([
+  //   [2 / right_to_left, 0, 0, 0],
+  //   [0, 2 / top_to_bottom, 0, 0],
+  //   [0, 0, 2 / near_to_far, -(zNear + zFar) / near_to_far],
+  //   [0, 0, 0, 1]
+  // ]);
+
   // 透视转为正交的矩阵
   const persp_to_ortho = Matrix.createBy2dArray([
     [zNear, 0, 0, 0],
@@ -452,3 +458,50 @@ const computeBarycentric2D = (x: number, y: number, v: Vector3[]) => {
     (v[2].x * (v[0].y - v[1].y) + (v[1].x - v[0].x) * v[2].y + v[0].x * v[1].y - v[1].x * v[0].y);
   return [c1, c2, c3];
 };
+
+const objectsArray: any[] = [
+  {
+    vecs: [
+      [2, 0, -2],
+      [0, 2, -2],
+      [-2, 0, -2],
+      [3.5, -1, -5],
+      [2.5, 1.5, -5],
+      [-1, 0.5, -5],
+      [1, 0, -1],
+      [0, 4, -4],
+      [-2, 0, -7]
+    ],
+    inds: [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8]
+    ],
+    cols: [
+      [185, 217, 238],
+      [217, 238, 185],
+      [66, 135, 245]
+    ]
+  },
+  {
+    vecs: [
+      [2, 0, -2],
+      [0, 2, -2],
+      [-2, 0, -2],
+      [0, 0, -6]
+    ],
+    inds: [
+      [0, 1, 2],
+      [0, 1, 3],
+      [1, 2, 3],
+      [0, 2, 3]
+    ],
+
+    cols: [
+      [185, 217, 238],
+      [217, 238, 185],
+      [66, 135, 245],
+      [50, 168, 82]
+    ]
+  }
+];
