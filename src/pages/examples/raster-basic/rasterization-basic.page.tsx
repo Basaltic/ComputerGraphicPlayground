@@ -165,7 +165,7 @@ export default function BasicRasterizationPage() {
               const oldDepth = z_buffer[ind];
 
               if (oldDepth === undefined || oldDepth < z_interpolated) {
-                frameBuffer[ind] = triangle.colors[0].coord.concat(count / ysqrt);
+                frameBuffer[ind] = triangle.colors[0].multiply(count / ysqrt);
                 z_buffer[ind] = z_interpolated;
               }
             }
