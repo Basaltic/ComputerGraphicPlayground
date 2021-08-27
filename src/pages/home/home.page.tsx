@@ -7,7 +7,7 @@ export default function HomePage() {
 
   return (
     <>
-      <h3>示例入口：</h3>
+      <h3>示例入口(CPU模拟)：</h3>
       <div>
         <Link to="/raster-basic">光栅化三角形</Link>
       </div>
