@@ -2,10 +2,48 @@ import { useMount } from 'ahooks';
 import React, { useRef } from 'react';
 import { createShader, createProgram } from '../webglutil';
 
+// 相当于是以右上角为 （0，0）的2d 画布
+const vertexShaderSource = `
+  // an attribute will receive data from a buffer
+  attribute vec2 a_position;
+
+  // 传入的分辨率
+  uniform vec2 u_resolution;
+
+  // all shaders have a main function
+  void main() {
+    // pixel position to [0, 1]
+    vec2 zeroToOne = a_position / u_resolution;
+
+    vec2 zeroToTwo = zeroToOne * 2.0;
+
+    vec2 clipSpace = zeroToTwo - 1.0;
+
+
+    // gl_Position is a special variable a vertex shader
+    // is responsible for setting
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+  }
+`;
+
+const fragmentShaderSource = `
+  // fragment shaders don't have a default precision so we need
+  // to pick one. mediump is a good default
+  precision mediump float;
+
+  uniform vec4 u_color;
+
+  void main() {
+    // gl_FragColor is a special variable a fragment shader
+    // is responsible for setting
+    gl_FragColor = u_color; // return reddish-purple
+  }
+`;
+
 /**
  * WebGL 随便尝试、玩耍的地方
  */
-export default function WebglPlaygroundPage() {
+export default function WebglPlayground1Page1() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useMount(() => {
@@ -19,6 +57,8 @@ export default function WebglPlaygroundPage() {
         if (program) {
           // 初始化的时候获取 shader中定义的attribute
           const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+          const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+          const colorUniformLocation = gl.getUniformLocation(program, 'u_color');
 
           // 创建buffer，attribute需要从buffer中获取数据
           const positionBuffer = gl.createBuffer() as WebGLBuffer;
@@ -28,7 +68,7 @@ export default function WebglPlaygroundPage() {
           gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
           // 通过 gl.ARRAY_BUFFER 这个标识，自动把positions的数据放到buffer中
-          const positions = [0, 0, 0, 0.5, 0.7, 0];
+          const positions = [10, 20, 80, 20, 10, 30, 10, 30, 80, 20, 80, 30];
           gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
           // 把 [-1, 1] 的标准立方体坐标映射到画布大小的像素坐标
@@ -53,13 +93,26 @@ export default function WebglPlaygroundPage() {
           let offset = 0; // 从多少偏移位置开始去buffer中的数据
           gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
 
+          // 把值传给shader的uniform
+          gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
           // 真正的绘制像素
           // count是3，表示执行vertex shader三次
           // 因为类型是 TRIANGLES， 三角形，每执行三次就会绘制一个三角形
           const primitiveType = gl.TRIANGLES;
           offset = 0;
-          const count = 3;
+          const count = 6;
           gl.drawArrays(primitiveType, offset, count);
+
+          for (let i = 0; i < 50; i++) {
+            setRectangle(gl, randomInt(300), randomInt(300), randomInt(300), randomInt(300));
+
+            // 设置随机的颜色
+            gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
+
+            // 画
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+          }
         }
       }
     }
@@ -72,27 +125,23 @@ export default function WebglPlaygroundPage() {
   );
 }
 
-const vertexShaderSource = `
-  // an attribute will receive data from a buffer
-  attribute vec4 a_position;
+/**
+ * 画真长方形
+ * @param gl
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ */
+function setRectangle(gl: WebGLRenderingContext, x: number, y: number, width: number, height: number) {
+  const x1 = x;
+  const x2 = x + width;
+  const y1 = y;
+  const y2 = y + height;
 
-  // all shaders have a main function
-  void main() {
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]), gl.STATIC_DRAW);
+}
 
-    // gl_Position is a special variable a vertex shader
-    // is responsible for setting
-    gl_Position = a_position;
-  }
-`;
-
-const fragmentShaderSource = `
-  // fragment shaders don't have a default precision so we need
-  // to pick one. mediump is a good default
-  precision mediump float;
-
-  void main() {
-    // gl_FragColor is a special variable a fragment shader
-    // is responsible for setting
-    gl_FragColor = vec4(1, 0, 0.5, 1); // return reddish-purple
-  }
-`;
+function randomInt(range: number) {
+  return Math.floor(Math.random() * range);
+}
