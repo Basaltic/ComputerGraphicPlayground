@@ -1,5 +1,5 @@
 /**
- * 画布
+ * 画布，只能画单个像素，模拟屏幕显示器
  */
 export class Canvas {
   public context: CanvasRenderingContext2D;
