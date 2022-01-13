@@ -1,5 +1,5 @@
 /**
- * 3维度向量
+ * 向量（3维）
  */
 export class Vector3 {
   coord: number[];
@@ -20,12 +20,28 @@ export class Vector3 {
     this.coord = [x, y, z];
   }
 
-  public static createByArray(v: number[]) {
+  /**
+   * 数组转换为向量
+   * 
+   * @param v 
+   * @returns 
+   */
+  public static fromArray(v: number[]) {
     return new Vector3(v[0], v[1], v[2]);
   }
 
+  /**
+   * 转换为齐次坐标数组
+   */
   public toHomoVec4Array() {
     return [this.x, this.y, this.z, 1];
+  }
+
+  /**
+   * 转换为数组
+   */
+  public toArray(): number[] {
+    return this.coord
   }
 
   /**
@@ -70,6 +86,13 @@ export class Vector3 {
   }
 
   /**
+   * 加向量
+   */
+  public add(v: Vector3) {
+    return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z)
+  }
+
+  /**
    * a - b
    * @param a
    * @param b
@@ -79,7 +102,7 @@ export class Vector3 {
   }
 
   /**
-   * 相加
+   * 相加: a + b
    *
    * @param v
    * @returns
@@ -89,7 +112,7 @@ export class Vector3 {
   }
 
   /**
-   * 两个向量点乘
+   * 两个向量点乘: a * b
    *
    * @param a
    * @param b
@@ -100,7 +123,7 @@ export class Vector3 {
   }
 
   /**
-   * 两个向量叉乘
+   * 两个向量叉乘：a x b
    *
    * @param a
    * @param b

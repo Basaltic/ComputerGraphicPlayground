@@ -1,7 +1,7 @@
 /**
  * 矩阵 4阶
  */
-export class Matrix {
+export class Matrix3 {
   values: number[] = [];
 
   constructor(values: number[]) {
@@ -13,23 +13,23 @@ export class Matrix {
     for (const v of values) {
       d.push(...v);
     }
-    return new Matrix(d);
+    return new Matrix3(d);
   }
 
   /**
    * 单位举证
    */
   static identity() {
-    return new Matrix([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    return new Matrix3([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
 
   /**
    * 矩阵乘法
    * @param matrix
    */
-  multiply(matrix: Matrix) {
+  multiply(matrix: Matrix3) {
     const v = multiplyMatrices(matrix.values, this.values);
-    return new Matrix(v);
+    return new Matrix3(v);
   }
 
   multiplyPoint(point: number[]): number[] {
