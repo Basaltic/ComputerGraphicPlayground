@@ -1,3 +1,5 @@
+import { Vector4 } from './vector4';
+
 /**
  * 矩阵 4阶
  */
@@ -35,6 +37,10 @@ export class Matrix4 {
   multiplyPoint(point: number[]): number[] {
     const v = multiplyMatrixAndPoint(this.values, point);
     return v;
+  }
+
+  multiplyByVector4(vec: Vector4) {
+    return Vector4.fromArray(multiplyMatrixAndPoint(this.values, vec.toArray()));
   }
 }
 

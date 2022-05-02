@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '../../../renderer/canvas';
-import { DEG_TO_RAD } from '../../../libs/math/const';
-import { Triangle } from '../../../libs/shapes/triangle';
+import { Triangle } from './triangle';
 import { Vector3 } from '../../../libs/math/vector3';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { FormItem } from '../../../component/form';
-import { Matrix4 } from '../../../libs/math/matrix4';
+import { get_view_matrix, get_model_matrix, get_projection_matrix } from './utils';
+import { Vertex } from './vertex';
 
 const WIDTH = 800;
 const HEIGHT = 800;
@@ -40,13 +40,13 @@ export default function BasicRasterizationPage() {
   useHotkeys('e', () => setOptions({ ...options, z_rotate_angle: options.z_rotate_angle + 10 }), [options]);
 
   useEffect(() => {
-    startRender();
+    render();
   }, [options.z_rotate_angle, options.y_rotate_angle, options.x_rotate_angle]);
 
   /**
    * 开始绘制
    */
-  const startRender = () => {
+  const render = () => {
     if (!canvasRef.current) return;
 
     const context: CanvasRenderingContext2D = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
@@ -72,7 +72,6 @@ export default function BasicRasterizationPage() {
     const view = get_view_matrix(eye_pos);
     const model = get_model_matrix(options.z_rotate_angle, options.y_rotate_angle, options.x_rotate_angle);
     const projection = get_projection_matrix(eye_fov, aspect_ratio, z_near, z_far);
-
     const mvp = projection.multiply(view).multiply(model);
 
     const f1 = (Math.abs(z_far) - Math.abs(z_near)) / 2;
@@ -85,22 +84,26 @@ export default function BasicRasterizationPage() {
       const ind = inds[m];
 
       // 新建一个三角形
-      const colors = [cols[m], cols[m], cols[m]].map((c) => Vector3.fromArray(c));
       const v0 = Vector3.fromArray(vecs[ind[0]]);
       const v1 = Vector3.fromArray(vecs[ind[1]]);
       const v2 = Vector3.fromArray(vecs[ind[2]]);
-      const triangle = new Triangle([v0, v1, v2], colors);
+      const c = Vector3.fromArray(cols[m]);
 
-      // mvp 变换
-      triangle.transformMVP(mvp);
-      // viewport 变换
-      triangle.transfromViewport(width, height, f1, f2);
+      const vx0 = new Vertex(v0, c);
+      const vx1 = new Vertex(v1, c);
+      const vx2 = new Vertex(v2, c);
+
+      const triangle = new Triangle([vx0, vx1, vx2]);
 
       // 看锯齿选项 MSAA - n * n
       const is_open_anti_alias = options.anti_alias > 0;
       const anti_alias_n = options.anti_alias;
 
-      // 渲染
+      // mvp 变换
+      triangle.transformMVP(mvp);
+      // viewport 变换
+      triangle.transfromViewport(width, height, f1, f2);
+      // draw triangle in frame buffer
       triangle.render(frame_buffer, z_buffer, width, height, is_open_anti_alias, anti_alias_n);
     }
 
@@ -118,7 +121,6 @@ export default function BasicRasterizationPage() {
       }
     }
 
-    console.log(vecs);
     console.log('render finished !');
   };
 
@@ -219,7 +221,6 @@ export default function BasicRasterizationPage() {
               <select onChange={change_scene}>
                 <option value="1">三角形</option>
                 <option value="2">三角锥</option>
-                {/* <option value="3">MSAA 16x</option> */}
               </select>
             </FormItem>
           </form>
@@ -227,7 +228,7 @@ export default function BasicRasterizationPage() {
         <br />
         <br />
         <div>
-          <button onClick={startRender}>Render</button>
+          <button onClick={render}>Render</button>
         </div>
         <br />
         <br />
@@ -238,106 +239,6 @@ export default function BasicRasterizationPage() {
     </div>
   );
 }
-
-/**
- * 获取模型矩阵 - 也就是变换矩阵
- */
-const get_model_matrix = (z_rotation_angle: number, y_rotation_angle: number, x_rotation_angle: number) => {
-  const z_rad_angle = z_rotation_angle * DEG_TO_RAD;
-  const z_cos_value = Math.cos(z_rad_angle);
-  const z_sin_value = Math.sin(z_rad_angle);
-  const rotateByZMatrix = Matrix4.createBy2dArray([
-    [z_cos_value, -z_sin_value, 0, 0],
-    [z_sin_value, z_cos_value, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 0, 1]
-  ]);
-
-  const y_rad_angle = y_rotation_angle * DEG_TO_RAD;
-  const y_cos_value = Math.cos(y_rad_angle);
-  const y_sin_value = Math.sin(y_rad_angle);
-  const rotateByYMatrix = Matrix4.createBy2dArray([
-    [y_cos_value, 0, y_sin_value, 0],
-    [0, 1, 0, 0],
-    [-y_sin_value, 0, y_cos_value, 0],
-    [0, 0, 0, 1]
-  ]);
-
-  const x_rad_angle = x_rotation_angle * DEG_TO_RAD;
-  const x_cos_value = Math.cos(x_rad_angle);
-  const x_sin_value = Math.sin(x_rad_angle);
-  const rotateByXMatrix = Matrix4.createBy2dArray([
-    [1, 0, 0, 0],
-    [0, x_cos_value, -x_sin_value, 0],
-    [0, x_sin_value, x_cos_value, 0],
-    [0, 0, 0, 1]
-  ]);
-
-  console.log(x_rotation_angle, y_rotation_angle, z_rotation_angle);
-
-  return rotateByXMatrix.multiply(rotateByYMatrix).multiply(rotateByZMatrix);
-};
-
-/**
- * 根据摄像机（观察）所在的位置，生成一个平移矩阵，移动到（0，0，0）的位置
- * @param eyePos
- */
-const get_view_matrix = (eyePos: Vector3) => {
-  const viewTranslateMatrix = Matrix4.createBy2dArray([
-    [1, 0, 0, -eyePos.x],
-    [0, 1, 0, -eyePos.y],
-    [0, 0, 1, -eyePos.z],
-    [0, 0, 0, 1]
-  ]);
-  return viewTranslateMatrix;
-};
-
-/**
- * 获取投影矩阵
- *
- * @param eye_fov 摄像机的视野角度
- * @param aspect_ratio 宽长比
- * @param zNear 近平面距离（）
- * @param zFar 远平面距离
- */
-const get_projection_matrix = (eye_fov: number, aspect_ratio: number, zNear: number, zFar: number) => {
-  const radian_fov = eye_fov * DEG_TO_RAD;
-  const tan_fov = Math.tan(radian_fov / 2);
-
-  const top = tan_fov * Math.abs(zNear);
-  const right = aspect_ratio * top;
-
-  const right_to_left = right * 2;
-  const top_to_bottom = top * 2;
-  const near_to_far = zNear - zFar;
-
-  // 这里默认 摄像机 在z轴上，那么不需要 x & y 轴的平移了
-  // 正交矩阵
-  const o1 = Matrix4.createBy2dArray([
-    [2 / right_to_left, 0, 0, 0],
-    [0, 2 / top_to_bottom, 0, 0],
-    [0, 0, 2 / near_to_far, 0],
-    [0, 0, 0, 1]
-  ]);
-  const o2 = Matrix4.createBy2dArray([
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, -(zNear + zFar) / 2],
-    [0, 0, 0, 1]
-  ]);
-  const ortho = o1.multiply(o2);
-
-  // 透视转为正交的矩阵
-  const persp_to_ortho = Matrix4.createBy2dArray([
-    [zNear, 0, 0, 0],
-    [0, zNear, 0, 0],
-    [0, 0, zNear + zFar, -zNear * zFar],
-    [0, 0, 1, 0]
-  ]);
-
-  const proj = ortho.multiply(persp_to_ortho);
-  return proj;
-};
 
 const objectsArray: any[] = [
   {

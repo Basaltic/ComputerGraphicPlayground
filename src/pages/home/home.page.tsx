@@ -1,10 +1,7 @@
 import React from 'react';
-import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 
 export default function HomePage() {
-  const history = useHistory();
-
   return (
     <>
       <h3>示例入口(CPU模拟)：</h3>

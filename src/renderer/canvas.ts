@@ -33,10 +33,10 @@ export class Canvas {
     this.context.restore();
   };
 
-  setBackground = () => {
+  setBackground = (color: string = '#000000') => {
     this.context.save();
 
-    this.context.fillStyle = `#000000`;
+    this.context.fillStyle = color;
     this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 
     this.context.restore();

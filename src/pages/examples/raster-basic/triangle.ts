@@ -1,12 +1,16 @@
-import { Matrix4 } from '../math/matrix4';
-import { Vector3 } from '../math/vector3';
+import { Matrix4 } from '../../../libs/math/matrix4';
+import { Vector3 } from '../../../libs/math/vector3';
+import { Vector4 } from '../../../libs/math/vector4';
+import { Vertex } from './vertex';
 
 /**
  * 三角形
  */
 export class Triangle {
-  v: Vector3[];
-  colors: Vector3[];
+  /**
+   * 三个顶点
+   */
+  v: Vertex[];
 
   get v0() {
     return this.v[0];
@@ -21,25 +25,24 @@ export class Triangle {
   // 法线
   get normal() {
     // v2->v0, v1->v0 两条边向量，叉乘为其法向量
-    const e1 = Vector3.subtract(this.v2, this.v0);
-    const e2 = Vector3.subtract(this.v1, this.v0);
+    const e1 = Vector3.subtract(this.v2.pos, this.v0.pos);
+    const e2 = Vector3.subtract(this.v1.pos, this.v0.pos);
 
     return Vector3.crossProduct(e1, e2);
   }
 
-  constructor(v: Vector3[], colors: Vector3[]) {
+  constructor(v: Vertex[]) {
     this.v = v;
-    this.colors = colors;
   }
 
   /**
    * 获取包围盒
    */
   getBoundingBox() {
-    const minX = Math.floor(Math.min(this.v0.x, this.v1.x, this.v2.x));
-    const maxX = Math.ceil(Math.max(this.v0.x, this.v1.x, this.v2.x));
-    const minY = Math.floor(Math.min(this.v0.y, this.v1.y, this.v2.y));
-    const maxY = Math.ceil(Math.max(this.v0.y, this.v1.y, this.v2.y));
+    const minX = Math.floor(Math.min(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
+    const maxX = Math.ceil(Math.max(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
+    const minY = Math.floor(Math.min(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
+    const maxY = Math.ceil(Math.max(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
 
     return {
       minX,
@@ -57,9 +60,9 @@ export class Triangle {
    * @param y
    */
   isInside(x: number, y: number) {
-    const a = new Vector3(this.v[0].x, this.v[0].y, 0);
-    const b = new Vector3(this.v[1].x, this.v[1].y, 0);
-    const c = new Vector3(this.v[2].x, this.v[2].y, 0);
+    const a = new Vector3(this.v0.pos.x, this.v0.pos.y, 0);
+    const b = new Vector3(this.v1.pos.x, this.v1.pos.y, 0);
+    const c = new Vector3(this.v2.pos.x, this.v2.pos.y, 0);
     const p = new Vector3(x, y, 0);
 
     const ab = Vector3.subtract(b, a);
@@ -90,26 +93,25 @@ export class Triangle {
    */
   transformMVP(mvp: Matrix4) {
     // 普通的点转换为齐次坐标的点
-    const v0 = this.v0.toHomoVec4Array();
-    const v1 = this.v1.toHomoVec4Array();
-    const v2 = this.v2.toHomoVec4Array();
+    const v0 = Vector4.fromVec3(this.v0.pos);
+    const v1 = Vector4.fromVec3(this.v1.pos);
+    const v2 = Vector4.fromVec3(this.v2.pos);
 
     // mvp变换
-    const v00 = mvp.multiplyPoint(v0);
-    const v11 = mvp.multiplyPoint(v1);
-    const v22 = mvp.multiplyPoint(v2);
+    let v00 = mvp.multiplyByVector4(v0);
+    let v11 = mvp.multiplyByVector4(v1);
+    let v22 = mvp.multiplyByVector4(v2);
 
     // 齐次坐标归一
-    const vs = [v00, v11, v22];
-    for (let v of vs) {
-      const w = v[3];
-      v[0] /= w;
-      v[1] /= w;
-      v[2] /= w;
-      v[3] = 1;
-    }
+    v00 = v00.divide(v00.w);
+    v11 = v11.divide(v11.w);
+    v22 = v22.divide(v22.w);
 
-    this.v = [Vector3.fromArray(v00), Vector3.fromArray(v11), Vector3.fromArray(v22)];
+    console.log(v00, v11, v22);
+
+    this.v0.pos = v00.toVec3();
+    this.v1.pos = v11.toVec3();
+    this.v2.pos = v22.toVec3();
   }
 
   /**
@@ -117,11 +119,14 @@ export class Triangle {
    */
   transfromViewport(vw: number, vh: number, f1: number, f2: number) {
     for (let i = 0; i < this.v.length; i += 1) {
-      const vec = this.v[i];
-      const v = vec.coord;
-      v[0] = 0.5 * vw * (v[0] + 1);
-      v[1] = 0.5 * vh * (v[1] + 1);
-      v[2] = v[2] * f1 + f2;
+      const vertex = this.v[i];
+      const v = vertex.pos;
+
+      const x = 0.5 * vw * (v.x + 1);
+      const y = 0.5 * vh * (v.y + 1);
+      const z = v.z * f1 + f2;
+
+      vertex.pos = new Vector3(x, y, z);
     }
   }
 
@@ -189,12 +194,12 @@ export class Triangle {
         const [alpha, beta, gamma] = this.compute_barycentric_2D(xx, yy);
 
         const w = 1 / (alpha + beta + gamma);
-        let z_interpolated = alpha * triangle.v0.z + beta * triangle.v1.z + gamma * triangle.v2.z;
+        let z_interpolated = alpha * triangle.v0.pos.z + beta * triangle.v1.pos.z + gamma * triangle.v2.pos.z;
 
         z_interpolated *= w;
         const z_depth = z_interpolated;
 
-        if (!z_buffer[ind]) z_buffer[ind] = []
+        if (!z_buffer[ind]) z_buffer[ind] = [];
 
         const old_z_depth = z_buffer[ind][x - 1];
 
@@ -205,8 +210,8 @@ export class Triangle {
       }
     }
 
-    let frame_color = Vector3.fromArray(frame_buffer[ind] || [255,255,255]).multiply((ysqrt - count)/ysqrt);
-    let current_color = triangle.colors[0].multiply(count / ysqrt);
+    let frame_color = Vector3.fromArray(frame_buffer[ind] || [255, 255, 255]).multiply((ysqrt - count) / ysqrt);
+    let current_color = triangle.v0.color.multiply(count / ysqrt);
 
     frame_buffer[ind] = frame_color.add(current_color).toArray();
   };
@@ -237,7 +242,7 @@ export class Triangle {
       const y = vh - j;
 
       const w = 1 / (alpha + beta + gamma);
-      let z_interpolated = alpha * triangle.v0.z + beta * triangle.v1.z + gamma * triangle.v2.z;
+      let z_interpolated = alpha * triangle.v0.pos.z + beta * triangle.v1.pos.z + gamma * triangle.v2.pos.z;
       z_interpolated *= w;
 
       const ind = x + y * vw;
@@ -245,7 +250,7 @@ export class Triangle {
       const old_z_depth = z_buffer[ind]?.[0];
 
       if (old_z_depth === undefined || old_z_depth < z_interpolated) {
-        frame_buffer[ind] = triangle.colors[0].toArray();
+        frame_buffer[ind] = triangle.v0.color.toArray();
         z_buffer[ind] = [z_interpolated];
       }
     }
@@ -262,14 +267,14 @@ export class Triangle {
     const v = this.v;
 
     const c1 =
-      (x * (v[1].y - v[2].y) + (v[2].x - v[1].x) * y + v[1].x * v[2].y - v[2].x * v[1].y) /
-      (v[0].x * (v[1].y - v[2].y) + (v[2].x - v[1].x) * v[0].y + v[1].x * v[2].y - v[2].x * v[1].y);
+      (x * (v[1].pos.y - v[2].pos.y) + (v[2].pos.x - v[1].pos.x) * y + v[1].pos.x * v[2].pos.y - v[2].pos.x * v[1].pos.y) /
+      (v[0].pos.x * (v[1].pos.y - v[2].pos.y) + (v[2].pos.x - v[1].pos.x) * v[0].pos.y + v[1].pos.x * v[2].pos.y - v[2].pos.x * v[1].pos.y);
     const c2 =
-      (x * (v[2].y - v[0].y) + (v[0].x - v[2].x) * y + v[2].x * v[0].y - v[0].x * v[2].y) /
-      (v[1].x * (v[2].y - v[0].y) + (v[0].x - v[2].x) * v[1].y + v[2].x * v[0].y - v[0].x * v[2].y);
+      (x * (v[2].pos.y - v[0].pos.y) + (v[0].pos.x - v[2].pos.x) * y + v[2].pos.x * v[0].pos.y - v[0].pos.x * v[2].pos.y) /
+      (v[1].pos.x * (v[2].pos.y - v[0].pos.y) + (v[0].pos.x - v[2].pos.x) * v[1].pos.y + v[2].pos.x * v[0].pos.y - v[0].pos.x * v[2].pos.y);
     const c3 =
-      (x * (v[0].y - v[1].y) + (v[1].x - v[0].x) * y + v[0].x * v[1].y - v[1].x * v[0].y) /
-      (v[2].x * (v[0].y - v[1].y) + (v[1].x - v[0].x) * v[2].y + v[0].x * v[1].y - v[1].x * v[0].y);
+      (x * (v[0].pos.y - v[1].pos.y) + (v[1].pos.x - v[0].pos.x) * y + v[0].pos.x * v[1].pos.y - v[1].pos.x * v[0].pos.y) /
+      (v[2].pos.x * (v[0].pos.y - v[1].pos.y) + (v[1].pos.x - v[0].pos.x) * v[2].pos.y + v[0].pos.x * v[1].pos.y - v[1].pos.x * v[0].pos.y);
 
     return [c1, c2, c3];
   };

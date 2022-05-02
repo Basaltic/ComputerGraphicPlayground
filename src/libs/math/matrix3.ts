@@ -1,5 +1,5 @@
 /**
- * 矩阵 4阶
+ * 矩阵 3阶
  */
 export class Matrix3 {
   values: number[] = [];
