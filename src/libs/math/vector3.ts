@@ -20,76 +20,69 @@ export class Vector3 {
     this.coord = [x, y, z];
   }
 
-  /**
-   * 数组转换为向量
-   * 
-   * @param v 
-   * @returns 
-   */
-  public static fromArray(v: number[]) {
-    return new Vector3(v[0], v[1], v[2]);
-  }
-
-  /**
-   * 转换为齐次坐标数组
-   */
-  public toHomoVec4Array() {
-    return [this.x, this.y, this.z, 1];
-  }
-
-  /**
-   * 转换为数组
-   */
-  public toArray(): number[] {
-    return this.coord
-  }
-
-  /**
-   * 点乘
-   *
-   * @param b
-   * @returns
-   */
-  public dot(b: Vector3) {
-    return this.x * b.x + this.y * b.y + this.z * b.z;
-  }
-
-  /**
-   * 叉乘
-   *
-   * @param b
-   */
-  public cross(b: Vector3) {
-    return new Vector3(this.y * b.z - this.z * b.y, this.z * b.x - this.x * b.z, this.x * b.y - this.y * b.x);
+  getMagnitude() {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
 
   /**
    * 获取该向量的单位向量
    */
-  public normalized() {
-    const n = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  normalized() {
+    const n = this.getMagnitude();
     return new Vector3(this.x / n, this.y / n, this.z / n);
+  }
+
+  /**
+   * 点乘
+   */
+  dot(b: Vector3) {
+    return this.x * b.x + this.y * b.y + this.z * b.z;
+  }
+
+  /**
+   * 叉乘
+   */
+  cross(b: Vector3) {
+    return new Vector3(this.y * b.z - this.z * b.y, this.z * b.x - this.x * b.z, this.x * b.y - this.y * b.x);
   }
 
   /**
    * 除一个数
    */
-  public divide(v: number) {
+  divide(v: number) {
     return new Vector3(this.x / v, this.y / v, this.z / v);
   }
 
   /**
    * 乘一个数
    */
-  public multiply(v: number) {
+  multiply(v: number) {
     return new Vector3(this.x * v, this.y * v, this.z * v);
   }
 
   /**
    * 加向量
    */
-  public add(v: Vector3) {
-    return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z)
+  add(v: Vector3) {
+    return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
+  }
+
+  equals(v: Vector3) {
+    return this.x === v.x && this.y === v.x && this.z === v.z;
+  }
+
+  /**
+   * 转换为齐次坐标数组
+   */
+  toHomoVec4Array() {
+    return [this.x, this.y, this.z, 1];
+  }
+
+  /**
+   * 转换为数组
+   */
+  toArray(): number[] {
+    return this.coord;
   }
 
   /**
@@ -97,7 +90,7 @@ export class Vector3 {
    * @param a
    * @param b
    */
-  public static subtract(a: Vector3, b: Vector3) {
+  static subtract(a: Vector3, b: Vector3) {
     return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
   }
 
@@ -107,7 +100,7 @@ export class Vector3 {
    * @param v
    * @returns
    */
-  public static add(a: Vector3, b: Vector3) {
+  static add(a: Vector3, b: Vector3) {
     return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
   }
 
@@ -118,7 +111,7 @@ export class Vector3 {
    * @param b
    * @returns {number}
    */
-  public static dotProduct(a: Vector3, b: Vector3) {
+  static dotProduct(a: Vector3, b: Vector3) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
   }
 
@@ -129,7 +122,17 @@ export class Vector3 {
    * @param b
    * @returns {Vector3}
    */
-  public static crossProduct(a: Vector3, b: Vector3) {
+  static crossProduct(a: Vector3, b: Vector3) {
     return new Vector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+  }
+
+  /**
+   * 数组转换为向量
+   *
+   * @param v
+   * @returns
+   */
+  static fromArray(v: number[]) {
+    return new Vector3(v[0], v[1], v[2]);
   }
 }
