@@ -6,7 +6,7 @@ import { Vector4 } from './vector4';
 export class Matrix4 {
   values: number[] = [];
 
-  constructor(values: number[]) {
+  constructor(values: number[] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]) {
     this.values = values;
   }
 

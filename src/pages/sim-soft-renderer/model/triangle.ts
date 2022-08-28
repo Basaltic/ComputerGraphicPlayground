@@ -1,25 +1,27 @@
-import { Matrix4 } from '../../libs/math/matrix4';
-import { Vector3 } from '../../libs/math/vector3';
-import { Vector4 } from '../../libs/math/vector4';
-import { Vertex } from './vertex';
+import { Matrix4 } from '../../../libs/math/matrix4';
+import { Vector3 } from '../../../libs/math/vector3';
+import { Vector4 } from '../../../libs/math/vector4';
+import { Renderer } from '../core/renderer';
+import { Vertex } from '../core/vertex';
+import { IMesh } from './mesh';
 
 /**
  * 三角形
  */
-export class Triangle {
+export class Triangle implements IMesh {
   /**
    * 三个顶点
    */
-  v: Vertex[];
+  vs: Vertex[];
 
   get v0() {
-    return this.v[0];
+    return this.vs[0];
   }
   get v1() {
-    return this.v[1];
+    return this.vs[1];
   }
   get v2() {
-    return this.v[2];
+    return this.vs[2];
   }
 
   // 法线
@@ -31,8 +33,8 @@ export class Triangle {
     return Vector3.crossProduct(e1, e2);
   }
 
-  constructor(v: Vertex[]) {
-    this.v = v;
+  constructor(vs: Vertex[], private renderer: Renderer) {
+    this.vs = vs;
   }
 
   /**
@@ -107,8 +109,6 @@ export class Triangle {
     v11 = v11.divide(v11.w);
     v22 = v22.divide(v22.w);
 
-    console.log(v00, v11, v22);
-
     this.v0.pos = v00.toVec3();
     this.v1.pos = v11.toVec3();
     this.v2.pos = v22.toVec3();
@@ -117,13 +117,18 @@ export class Triangle {
   /**
    * 视口变换
    */
-  transfromViewport(vw: number, vh: number, f1: number, f2: number) {
-    for (let i = 0; i < this.v.length; i += 1) {
-      const vertex = this.v[i];
+  transfromViewport() {
+    const { width, height, camera } = this.renderer;
+    const { zfar, znear } = camera;
+    const f1 = (Math.abs(zfar) - Math.abs(znear)) / 2;
+    const f2 = (Math.abs(zfar) + Math.abs(znear)) / 2;
+
+    for (let i = 0; i < this.vs.length; i += 1) {
+      const vertex = this.vs[i];
       const v = vertex.pos;
 
-      const x = 0.5 * vw * (v.x + 1);
-      const y = 0.5 * vh * (v.y + 1);
+      const x = 0.5 * width * (v.x + 1);
+      const y = 0.5 * height * (v.y + 1);
       const z = v.z * f1 + f2;
 
       vertex.pos = new Vector3(x, y, z);
@@ -132,26 +137,41 @@ export class Triangle {
 
   /**
    *
-   * @param frame_buffer
-   * @param z_buffer
+   * @param frameBuffer
+   * @param zBuffer
    * @param vw
    * @param vh
-   * @param is_open_anti_alias
-   * @param anti_alias_n
+   * @param isOpenAntiAlias
+   * @param antiAliasN
    */
-  render(frame_buffer: number[][], z_buffer: number[][], vw: number, vh: number, is_open_anti_alias?: boolean, anti_alias_n?: number) {
+  // render(frameBuffer: number[][], zBuffer: number[][], vw: number, vh: number, isOpenAntiAlias?: boolean, antiAliasN?: number) {
+  //   const { minX, maxX, minY, maxY } = this.getBoundingBox();
+
+  //   for (let i = minX; i < maxX; i++) {
+  //     for (let j = minY; j < maxY; j++) {
+  //       // 开启抗锯齿 - MSAA
+  //       if (isOpenAntiAlias && antiAliasN) {
+  //         this.doRenderPixelWithMsaa(this, antiAliasN, vw, vh, i, j, frameBuffer, zBuffer);
+  //       }
+  //       // 没有抗锯齿
+  //       else {
+  //         this.doRenderPixel(i, j);
+  //       }
+  //     }
+  //   }
+  // }
+
+  render() {
+    const mvp = this.renderer.getMvp();
+    this.transformMVP(mvp);
+    this.transfromViewport();
+
     const { minX, maxX, minY, maxY } = this.getBoundingBox();
 
     for (let i = minX; i < maxX; i++) {
       for (let j = minY; j < maxY; j++) {
-        // 开启抗锯齿 - MSAA
-        if (is_open_anti_alias && anti_alias_n) {
-          this.do_render_pixel_with_msaa(this, anti_alias_n, vw, vh, i, j, frame_buffer, z_buffer);
-        }
         // 没有抗锯齿
-        else {
-          this.do_render_pixel(this, vw, vh, i, j, frame_buffer, z_buffer);
-        }
+        this.doRenderPixel(i, j);
       }
     }
   }
@@ -166,15 +186,15 @@ export class Triangle {
    * @param j
    * @returns
    */
-  private do_render_pixel_with_msaa = (
+  private doRenderPixelWithMsaa = (
     triangle: Triangle,
     antiAliasN: number,
     vw: number,
     vh: number,
     i: number,
     j: number,
-    frame_buffer: number[][],
-    z_buffer: number[][]
+    frameBuffer: number[][],
+    zBuffer: number[][]
   ) => {
     const ysqrt = antiAliasN * antiAliasN;
 
@@ -191,7 +211,7 @@ export class Triangle {
 
       const is_inside_triangle = triangle.isInside(xx, yy);
       if (is_inside_triangle === true) {
-        const [alpha, beta, gamma] = this.compute_barycentric_2D(xx, yy);
+        const [alpha, beta, gamma] = this.computeBarycentric2D(xx, yy);
 
         const w = 1 / (alpha + beta + gamma);
         let z_interpolated = alpha * triangle.v0.pos.z + beta * triangle.v1.pos.z + gamma * triangle.v2.pos.z;
@@ -199,21 +219,21 @@ export class Triangle {
         z_interpolated *= w;
         const z_depth = z_interpolated;
 
-        if (!z_buffer[ind]) z_buffer[ind] = [];
+        if (!zBuffer[ind]) zBuffer[ind] = [];
 
-        const old_z_depth = z_buffer[ind][x - 1];
+        const old_z_depth = zBuffer[ind][x - 1];
 
         if (old_z_depth === undefined || old_z_depth < z_depth) {
-          z_buffer[ind][x - 1] = z_depth;
+          zBuffer[ind][x - 1] = z_depth;
           count += 1;
         }
       }
     }
 
-    let frame_color = Vector3.fromArray(frame_buffer[ind] || [255, 255, 255]).multiply((ysqrt - count) / ysqrt);
+    let frame_color = Vector3.fromArray(frameBuffer[ind] || [255, 255, 255]).multiply((ysqrt - count) / ysqrt);
     let current_color = triangle.v0.color.multiply(count / ysqrt);
 
-    frame_buffer[ind] = frame_color.add(current_color).toArray();
+    frameBuffer[ind] = frame_color.add(current_color).toArray();
   };
 
   /**
@@ -223,36 +243,24 @@ export class Triangle {
    * @param vh
    * @param i
    * @param j
-   * @param frame_buffer
-   * @param z_buffer
    */
-  private do_render_pixel = (
-    triangle: Triangle,
-    vw: number,
-    vh: number,
-    i: number,
-    j: number,
-    frame_buffer: number[][],
-    z_buffer: number[][]
-  ) => {
-    if (triangle.isInside(i, j)) {
-      const [alpha, beta, gamma] = this.compute_barycentric_2D(i, j);
+  private doRenderPixel = (i: number, j: number) => {
+    if (this.isInside(i, j)) {
+      const [alpha, beta, gamma] = this.computeBarycentric2D(i, j);
 
       const x = i;
-      const y = vh - j;
+      const y = this.renderer.height - j;
 
       const w = 1 / (alpha + beta + gamma);
-      let z_interpolated = alpha * triangle.v0.pos.z + beta * triangle.v1.pos.z + gamma * triangle.v2.pos.z;
-      z_interpolated *= w;
+      const zDepth = (alpha * this.v0.pos.z + beta * this.v1.pos.z + gamma * this.v2.pos.z) * w;
 
-      const ind = x + y * vw;
+      const r = (alpha * this.v0.color.x + beta * this.v1.color.x + gamma * this.v2.color.x) * w;
+      const g = (alpha * this.v0.color.y + beta * this.v1.color.y + gamma * this.v2.color.y) * w;
+      const b = (alpha * this.v0.color.z + beta * this.v1.color.z + gamma * this.v2.color.z) * w;
 
-      const old_z_depth = z_buffer[ind]?.[0];
+      const color = new Vector3(r, g, b);
 
-      if (old_z_depth === undefined || old_z_depth < z_interpolated) {
-        frame_buffer[ind] = triangle.v0.color.toArray();
-        z_buffer[ind] = [z_interpolated];
-      }
+      this.renderer.renderPixel(new Vector3(x, y, zDepth), color);
     }
   };
 
@@ -263,8 +271,8 @@ export class Triangle {
    * @param y
    * @returns
    */
-  private compute_barycentric_2D = (x: number, y: number) => {
-    const v = this.v;
+  private computeBarycentric2D = (x: number, y: number) => {
+    const v = this.vs;
 
     const c1 =
       (x * (v[1].pos.y - v[2].pos.y) + (v[2].pos.x - v[1].pos.x) * y + v[1].pos.x * v[2].pos.y - v[2].pos.x * v[1].pos.y) /

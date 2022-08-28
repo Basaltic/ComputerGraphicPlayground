@@ -6,20 +6,20 @@ import { Color } from './color';
  * 顶点
  */
 export class Vertex {
-  position: Vector3;
+  pos: Vector3;
   /**
    * RGB color
    * x = r, y = z
    */
-  color: Color;
+  color: Vector3;
 
   /**
    * 纹理坐标，范围 [0,1]
    */
-  uv: Vector2;
+  uv?: Vector2;
 
-  constructor(p: Vector3, c: Color, uv: Vector2) {
-    this.position = p;
+  constructor(p: Vector3, c: Vector3, uv?: Vector2) {
+    this.pos = p;
     this.color = c;
     this.uv = uv;
   }

@@ -1,4 +1,4 @@
-export class Buffer {
+export class Bitmap {
   w: number;
   h: number;
   buffer: Uint32Array;
