@@ -6,10 +6,7 @@ export default function HomePage() {
     <>
       <h3>示例入口(CPU模拟)：</h3>
       <div>
-        <Link to="/raster-basic">光栅化三角形</Link>
-      </div>
-      <div style={{ marginTop: 10 }}>
-        <Link to="/shading">着色</Link>
+        <Link to="/sim-soft-renderer">基于Canvas2D的软光栅化渲染器</Link>
       </div>
     </>
   );

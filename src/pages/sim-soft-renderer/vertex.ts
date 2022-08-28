@@ -1,4 +1,4 @@
-import { Vector3 } from '../../../libs/math/vector3';
+import { Vector3 } from '../../libs/math/vector3';
 
 /**
  * 顶点

@@ -1,6 +1,6 @@
-import { DEG_TO_RAD } from '../../../libs/math/const';
-import { Matrix4 } from '../../../libs/math/matrix4';
-import { Vector3 } from '../../../libs/math/vector3';
+import { DEG_TO_RAD } from '../../libs/math/const';
+import { Matrix4 } from '../../libs/math/matrix4';
+import { Vector3 } from '../../libs/math/vector3';
 
 /**
  * 获取模型矩阵 - 也就是变换矩阵

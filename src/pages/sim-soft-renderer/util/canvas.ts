@@ -51,5 +51,15 @@ export class Canvas {
    * Draw entire bitmap to screen
    *
    */
-  drawImage() {}
+  drawImage(image: ImageData) {
+    this.context.putImageData(image, 0, 0);
+
+    // this.context.save();
+
+    // this.context.imageSmoothingEnabled = false;
+
+    // this.context.drawImage(image, 0, 0);
+
+    // this.context.restore();
+  }
 }

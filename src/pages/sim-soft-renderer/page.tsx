@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas } from '../../../renderer/canvas';
+import { Canvas } from '../../renderer/canvas';
 import { Triangle } from './triangle';
-import { Vector3 } from '../../../libs/math/vector3';
+import { Vector3 } from '../../libs/math/vector3';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { FormItem } from '../../../component/form';
+import { FormItem } from '../../component/form';
 import { get_view_matrix, get_model_matrix, get_projection_matrix } from './utils';
 import { Vertex } from './vertex';
 
@@ -16,7 +16,7 @@ const DEFAULT_COLOR = [255, 255, 255];
  * 基本光栅化
  * @returns
  */
-export default function BasicRasterizationPage() {
+export default function SimSoftRendererPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [options, setOptions] = useState<any>({

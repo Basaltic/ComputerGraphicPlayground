@@ -3,8 +3,8 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/home/home.page';
-import BasicRasterizationPage from './pages/examples/rasterization/rasterization-basic.page';
-import ShadingPage from './pages/examples/shading/shading.page';
+import { SimSoftRendererPage } from './pages/sim-soft-renderer/pageV2';
+
 import WebglPlaygroundPage2 from './pages/webgl/playground/playground2.page';
 import WebglPlayground1Page1 from './pages/webgl/playground/playground1.page';
 import WebglPlaygroundPage3 from './pages/webgl/playground/playground3/payground3.page';
@@ -16,8 +16,7 @@ function App() {
         <Routes>
           {/* 软光栅化 */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/raster-basic" element={<BasicRasterizationPage />} />
-          <Route path="/shading" element={<ShadingPage />} />
+          <Route path="/sim-soft-renderer" element={<SimSoftRendererPage />} />
 
           {/* webgl */}
           <Route path="/webgl/playground1" element={<WebglPlayground1Page1 />} />

@@ -1,6 +1,6 @@
-import { Matrix4 } from '../../../libs/math/matrix4';
-import { Vector3 } from '../../../libs/math/vector3';
-import { Vector4 } from '../../../libs/math/vector4';
+import { Matrix4 } from '../../libs/math/matrix4';
+import { Vector3 } from '../../libs/math/vector3';
+import { Vector4 } from '../../libs/math/vector4';
 import { Vertex } from './vertex';
 
 /**
