@@ -1,4 +1,4 @@
-export class Bitmap {
+export class Buffer {
   w: number;
   h: number;
   buffer: Uint32Array;
@@ -11,7 +11,7 @@ export class Bitmap {
   }
 
   set(x: number, y: number, v: number) {
-    this.buffer[x + this.h - 1 - y] = v;
+    this.buffer[x + y * this.w] = v;
   }
 
   /**

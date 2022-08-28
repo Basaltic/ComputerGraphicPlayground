@@ -8,7 +8,7 @@ export class Canvas {
 
     this.context.save();
 
-    this.context.fillStyle = `rgb(255, 255, 255)`;
+    this.context.fillStyle = `rgb(0, 0, 0)`;
     this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
 
     this.context.restore();
@@ -49,17 +49,8 @@ export class Canvas {
   /**
    * 画整个图像
    * Draw entire bitmap to screen
-   *
    */
   drawImage(image: ImageData) {
     this.context.putImageData(image, 0, 0);
-
-    // this.context.save();
-
-    // this.context.imageSmoothingEnabled = false;
-
-    // this.context.drawImage(image, 0, 0);
-
-    // this.context.restore();
   }
 }
