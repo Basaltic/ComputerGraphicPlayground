@@ -1,11 +1,14 @@
 import { Vector2 } from '../../../libs/math/vector2';
 import { Vector3 } from '../../../libs/math/vector3';
-import { Color } from './color';
+import { Color } from '../core/color';
 
 /**
  * 顶点
  */
 export class Vertex {
+  /**
+   * 位置
+   */
   pos: Vector3;
   /**
    * RGB color
@@ -18,9 +21,15 @@ export class Vertex {
    */
   uv?: Vector2;
 
-  constructor(p: Vector3, c: Vector3, uv?: Vector2) {
+  /**
+   * 法线
+   */
+  normal?: Vector3;
+
+  constructor(p: Vector3, c: Vector3, uv?: Vector2, normal?: Vector3) {
     this.pos = p;
     this.color = c;
     this.uv = uv;
+    this.normal = normal;
   }
 }

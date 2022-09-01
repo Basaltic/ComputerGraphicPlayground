@@ -2,7 +2,7 @@ import { Matrix4 } from '../../../libs/math/matrix4';
 import { Vector3 } from '../../../libs/math/vector3';
 import { Vector4 } from '../../../libs/math/vector4';
 import { Renderer } from '../core/renderer';
-import { Vertex } from '../core/vertex';
+import { Vertex } from './vertex';
 import { IMesh } from './mesh';
 
 /**

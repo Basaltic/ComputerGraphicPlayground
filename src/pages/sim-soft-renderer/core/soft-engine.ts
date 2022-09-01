@@ -1,40 +1,29 @@
-import { Vector3 } from '../../../libs/math/vector3';
 import { Canvas } from '../util/canvas';
-import { Camera } from './camera';
-import { Renderer } from './renderer';
 import { Scene } from './scene';
 
 export type SoftEngineConfig = {
   canvas: Canvas;
-  width: number;
-  height: number;
 };
 
 export class SoftEngine {
   canvas: Canvas;
 
-  camera: Camera;
-  renderer: Renderer;
-  scene: Scene;
+  scene?: Scene;
 
   prevTime?: number;
 
   constructor(configs: SoftEngineConfig) {
-    const { width, height, canvas } = configs;
-
-    const eye = Vector3.fromArray([0, 0, 5]);
-    const target = Vector3.fromArray([0, 0, -1]);
-    const up = Vector3.fromArray([0, 1, 0]);
-    const fov = 45;
-    const aspect = 1;
-    const znear = -1;
-    const zfar = -50;
+    const { canvas } = configs;
 
     this.canvas = canvas;
-    this.camera = new Camera(eye, target, up, aspect, fov, znear, zfar);
-    this.renderer = new Renderer({ width, height, camera: this.camera });
+  }
 
-    this.scene = new Scene(this.camera, this.renderer);
+  /**
+   * 加载场景世界
+   */
+  loadScene(scene: Scene) {
+    this.scene = scene;
+    return this;
   }
 
   start() {
@@ -42,10 +31,12 @@ export class SoftEngine {
     this.run();
   }
 
-  init() {}
+  init() {
+    this.scene?.init();
+  }
 
   update(delta: number) {
-    this.scene.update(delta);
+    this.scene?.update(delta);
   }
 
   run() {
@@ -61,13 +52,20 @@ export class SoftEngine {
 
     this.render();
 
-    // requestAnimationFrame(this.run.bind(this));
+    // requestAnimationFrame(() => this.run());
+    // setTimeout(() => {
+    //   this.run();
+    // }, 2000);
   }
 
   render() {
-    this.scene.render();
+    this.scene?.renderer.clear();
 
-    const imageData = this.renderer.frameBuffer.toImageData();
-    this.canvas.drawImage(imageData);
+    this.scene?.render();
+
+    console.log('render here');
+
+    const imageData = this.scene?.renderer.frameBuffer.toImageData();
+    imageData && this.canvas.drawImage(imageData);
   }
 }

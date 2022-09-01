@@ -17,7 +17,7 @@ export function clamp(v: number, min: number, max: number) {
 /**
  * 获取模型矩阵 - 也就是变换矩阵
  */
-export const get_model_matrix = (z_rotation_angle: number, y_rotation_angle: number, x_rotation_angle: number) => {
+export const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: number, x_rotation_angle: number) => {
   const z_rad_angle = z_rotation_angle * DEG_TO_RAD;
   const z_cos_value = Math.cos(z_rad_angle);
   const z_sin_value = Math.sin(z_rad_angle);
@@ -55,7 +55,7 @@ export const get_model_matrix = (z_rotation_angle: number, y_rotation_angle: num
  * 根据摄像机（观察）所在的位置，生成一个平移矩阵，移动到（0，0，0）的位置
  * @param eyePos
  */
-export const get_view_matrix = (eyePos: Vector3) => {
+export const getViewMatrix = (eyePos: Vector3) => {
   const viewTranslateMatrix = Matrix4.createBy2dArray([
     [1, 0, 0, -eyePos.x],
     [0, 1, 0, -eyePos.y],
@@ -73,7 +73,7 @@ export const get_view_matrix = (eyePos: Vector3) => {
  * @param zNear 近平面距离（）
  * @param zFar 远平面距离
  */
-export const get_projection_matrix = (eye_fov: number, aspect_ratio: number, zNear: number, zFar: number) => {
+export const getProjectionMatrix = (eye_fov: number, aspect_ratio: number, zNear: number, zFar: number) => {
   const radian_fov = eye_fov * DEG_TO_RAD;
   const tan_fov = Math.tan(radian_fov / 2);
 

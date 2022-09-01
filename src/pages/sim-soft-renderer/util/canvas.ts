@@ -52,5 +52,17 @@ export class Canvas {
    */
   drawImage(image: ImageData) {
     this.context.putImageData(image, 0, 0);
+    // const tmpCvs = document.createElement('canvas');
+    // const tmpGfx = tmpCvs.getContext('2d');
+
+    // tmpCvs.setAttribute('width', '400px');
+    // tmpCvs.setAttribute('height', '400px');
+
+    // tmpGfx?.putImageData(image, 0, 0);
+
+    // this.context.save();
+    // this.context.imageSmoothingEnabled = false;
+    // this.context.drawImage(tmpCvs, 0, 0);
+    // this.context.restore();
   }
 }

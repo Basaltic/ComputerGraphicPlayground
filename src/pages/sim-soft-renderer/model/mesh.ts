@@ -1,7 +1,7 @@
 import { Renderer } from '../core/renderer';
 
 export interface IMesh {
-  render(renderer: Renderer): void;
+  render(): void;
 }
 
 export interface MeshRenderOptions {}
