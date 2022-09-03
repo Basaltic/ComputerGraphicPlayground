@@ -1,5 +1,4 @@
 import { Vector3 } from '../../../libs/math/vector3';
-import { getViewMatrix, getModelMatrix, getProjectionMatrix } from '../util/common';
 
 /**
  *
@@ -30,16 +29,5 @@ export class Camera {
     this.fovy = fovy;
     this.zfar = zfar;
     this.znear = znear;
-  }
-
-  getMvp() {
-    const { eye, fovy, aspect, zfar, znear } = this;
-
-    const view = getViewMatrix(eye);
-    const model = getModelMatrix(0, 0, 0);
-    const projection = getProjectionMatrix(fovy, aspect, znear, zfar);
-    const mvp = projection.multiply(view).multiply(model);
-
-    return mvp;
   }
 }

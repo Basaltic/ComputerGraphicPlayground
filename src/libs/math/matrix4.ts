@@ -44,25 +44,25 @@ export class Matrix4 {
   }
 }
 
-// point • matrix
+// matrix • point
 function multiplyMatrixAndPoint(matrix: number[], point: number[]) {
   // Give a simple variable name to each part of the matrix, a column and row number
-  let c0r0 = matrix[0],
-    c1r0 = matrix[1],
-    c2r0 = matrix[2],
-    c3r0 = matrix[3];
-  let c0r1 = matrix[4],
-    c1r1 = matrix[5],
-    c2r1 = matrix[6],
-    c3r1 = matrix[7];
-  let c0r2 = matrix[8],
-    c1r2 = matrix[9],
-    c2r2 = matrix[10],
-    c3r2 = matrix[11];
-  let c0r3 = matrix[12],
-    c1r3 = matrix[13],
-    c2r3 = matrix[14],
-    c3r3 = matrix[15];
+  const m00 = matrix[0],
+    m01 = matrix[1],
+    m02 = matrix[2],
+    m03 = matrix[3];
+  const m10 = matrix[4],
+    m11 = matrix[5],
+    m12 = matrix[6],
+    m13 = matrix[7];
+  const m20 = matrix[8],
+    m21 = matrix[9],
+    m22 = matrix[10],
+    m23 = matrix[11];
+  const m30 = matrix[12],
+    m31 = matrix[13],
+    m32 = matrix[14],
+    m33 = matrix[15];
 
   // Now set some simple names for the point
   let x = point[0];
@@ -70,17 +70,13 @@ function multiplyMatrixAndPoint(matrix: number[], point: number[]) {
   let z = point[2];
   let w = point[3];
 
-  // Multiply the point against each part of the 1st column, then add together
-  let resultX = x * c0r0 + y * c0r1 + z * c0r2 + w * c0r3;
+  let resultX = x * m00 + y * m01 + z * m02 + w * m03;
 
-  // Multiply the point against each part of the 2nd column, then add together
-  let resultY = x * c1r0 + y * c1r1 + z * c1r2 + w * c1r3;
+  let resultY = x * m10 + y * m11 + z * m12 + w * m13;
 
-  // Multiply the point against each part of the 3rd column, then add together
-  let resultZ = x * c2r0 + y * c2r1 + z * c2r2 + w * c2r3;
+  let resultZ = x * m20 + y * m21 + z * m22 + w * m23;
 
-  // Multiply the point against each part of the 4th column, then add together
-  let resultW = x * c3r0 + y * c3r1 + z * c3r2 + w * c3r3;
+  let resultW = x * m30 + y * m31 + z * m32 + w * m33;
 
   return [resultX, resultY, resultZ, resultW];
 }

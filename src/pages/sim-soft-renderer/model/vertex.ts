@@ -32,4 +32,8 @@ export class Vertex {
     this.uv = uv;
     this.normal = normal;
   }
+
+  clone() {
+    return new Vertex(this.pos.clone(), this.color.clone(), this.uv?.clone(), this?.normal?.clone());
+  }
 }

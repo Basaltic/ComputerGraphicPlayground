@@ -4,6 +4,8 @@ import { Vector4 } from '../../../libs/math/vector4';
 import { Renderer } from '../core/renderer';
 import { Vertex } from './vertex';
 import { IMesh } from './mesh';
+import { getViewMatrix, getModelMatrix, getProjectionMatrix } from '../util/common';
+import { getState } from './globale-state';
 
 /**
  * 三角形
@@ -37,6 +39,10 @@ export class Triangle implements IMesh {
     this.vs = vs;
   }
 
+  clone(): IMesh {
+    return new Triangle([this.v0.clone(), this.v1.clone(), this.v2.clone()], this.renderer);
+  }
+
   /**
    * 获取包围盒
    */
@@ -56,58 +62,103 @@ export class Triangle implements IMesh {
 
   /**
    * 判断点 p(x,y) 是否在三角形内
-   * - 判断点 p 和三个点组成的向量 和对应的边向量的差乘结果是否是同方向
+   * 方法1 - 判断点 p 和三个点组成的向量 和对应的边向量的差乘结果是否是同方向
+   *
+   * 方法2 - 计算Q点的重心坐标，如果计算出的值存在负数，表示在三角形外，反之则在三角形内。
    *
    * @param x
    * @param y
    */
   isInside(x: number, y: number) {
-    const a = new Vector3(this.v0.pos.x, this.v0.pos.y, 0);
-    const b = new Vector3(this.v1.pos.x, this.v1.pos.y, 0);
-    const c = new Vector3(this.v2.pos.x, this.v2.pos.y, 0);
-    const p = new Vector3(x, y, 0);
+    // const a = new Vector3(this.v0.pos.x, this.v0.pos.y, 1);
+    // const b = new Vector3(this.v1.pos.x, this.v1.pos.y, 1);
+    // const c = new Vector3(this.v2.pos.x, this.v2.pos.y, 1);
+    // const p = new Vector3(x, y, 1);
 
-    const ab = Vector3.subtract(b, a);
-    const bc = Vector3.subtract(c, b);
-    const ca = Vector3.subtract(a, c);
+    // const ab = Vector3.subtract(b, a);
+    // const bc = Vector3.subtract(c, b);
+    // const ca = Vector3.subtract(a, c);
 
-    const ap = Vector3.subtract(p, a);
-    const bp = Vector3.subtract(p, b);
-    const cp = Vector3.subtract(p, c);
+    // const ap = Vector3.subtract(p, a);
+    // const bp = Vector3.subtract(p, b);
+    // const cp = Vector3.subtract(p, c);
 
-    const v1 = ab.cross(ap).normalized();
-    const v2 = bc.cross(bp).normalized();
-    const v3 = ca.cross(cp).normalized();
+    // const v1 = ab.cross(ap).normalized();
+    // const v2 = bc.cross(bp).normalized();
+    // const v3 = ca.cross(cp).normalized();
 
-    const v12 = v1.dot(v2);
-    const v23 = v2.dot(v3);
-    const v31 = v3.dot(v1);
+    // const v12 = v1.dot(v2);
+    // const v23 = v2.dot(v3);
+    // const v31 = v3.dot(v1);
 
-    if (v12 == v23 && v23 == v31 && v1.z > 0) {
+    // if (v12 == v23 && v23 == v31 && v1.z > 0) {
+    //   return true;
+    // }
+
+    // return false;
+
+    const [alpha, beta, gamma] = this.computeBarycentric2D(x, y);
+
+    if (alpha > 0 && beta > 0 && gamma > 0) {
       return true;
     }
 
     return false;
   }
 
+  getMvp() {
+    const { eye, fovy, aspect, zfar, znear } = this.renderer.camera;
+
+    const { rotate, scale, translate } = getState();
+    const { rx, ry, rz } = rotate;
+    const { tx, ty, tz } = translate;
+    const { sx, sy, sz } = scale;
+
+    const view = getViewMatrix(eye);
+    const model = getModelMatrix({ zRotationAngle: rz, yRotationAngle: ry, xRotationAngle: rx }, { tx, ty, tz }, { sx, sy, sz });
+    const projection = getProjectionMatrix(fovy, aspect, znear, zfar);
+    const mvp = projection.multiply(view).multiply(model);
+
+    console.log(model.values);
+
+    return mvp;
+  }
+
   /**
    * mvp变换
    */
   transformMVP(mvp: Matrix4) {
+    // console.log(this.v0.pos.toString());
+
+    const tm = Matrix4.createBy2dArray([
+      [1, 0, 0, 0],
+      [0, 1, 0, 0],
+      [0, 0, 1, 0],
+      [0, 0, 0, 1]
+    ]);
+
     // 普通的点转换为齐次坐标的点
-    const v0 = Vector4.fromVec3(this.v0.pos);
-    const v1 = Vector4.fromVec3(this.v1.pos);
-    const v2 = Vector4.fromVec3(this.v2.pos);
+    const v0 = this.v0.pos.toVector4();
+    const v1 = this.v1.pos.toVector4();
+    const v2 = this.v2.pos.toVector4();
 
     // mvp变换
-    let v00 = mvp.multiplyByVector4(v0);
-    let v11 = mvp.multiplyByVector4(v1);
-    let v22 = mvp.multiplyByVector4(v2);
+    let v00 = tm.multiplyByVector4(v0);
+    let v11 = tm.multiplyByVector4(v1);
+    let v22 = tm.multiplyByVector4(v2);
+
+    console.log(tm.values, v0.toString(), v00.toString());
+
+    v00 = mvp.multiplyByVector4(v00);
+    v11 = mvp.multiplyByVector4(v11);
+    v22 = mvp.multiplyByVector4(v22);
 
     // 齐次坐标归一
     v00 = v00.divide(v00.w);
     v11 = v11.divide(v11.w);
     v22 = v22.divide(v22.w);
+
+    console.log(mvp.values, v00.toString(), this.v0.pos.toString(), v00.w);
 
     this.v0.pos = v00.toVec3();
     this.v1.pos = v11.toVec3();
@@ -133,36 +184,12 @@ export class Triangle implements IMesh {
 
       vertex.pos = new Vector3(x, y, z);
     }
+
+    // console.log(this.v0.pos.toString());
   }
 
-  /**
-   *
-   * @param frameBuffer
-   * @param zBuffer
-   * @param vw
-   * @param vh
-   * @param isOpenAntiAlias
-   * @param antiAliasN
-   */
-  // render(frameBuffer: number[][], zBuffer: number[][], vw: number, vh: number, isOpenAntiAlias?: boolean, antiAliasN?: number) {
-  //   const { minX, maxX, minY, maxY } = this.getBoundingBox();
-
-  //   for (let i = minX; i < maxX; i++) {
-  //     for (let j = minY; j < maxY; j++) {
-  //       // 开启抗锯齿 - MSAA
-  //       if (isOpenAntiAlias && antiAliasN) {
-  //         this.doRenderPixelWithMsaa(this, antiAliasN, vw, vh, i, j, frameBuffer, zBuffer);
-  //       }
-  //       // 没有抗锯齿
-  //       else {
-  //         this.doRenderPixel(i, j);
-  //       }
-  //     }
-  //   }
-  // }
-
   render() {
-    const mvp = this.renderer.getMvp();
+    const mvp = this.getMvp();
     this.transformMVP(mvp);
     this.transfromViewport();
 
@@ -251,12 +278,11 @@ export class Triangle implements IMesh {
       const x = i;
       const y = this.renderer.height - j;
 
-      const w = 1 / (alpha + beta + gamma);
-      const zDepth = (alpha * this.v0.pos.z + beta * this.v1.pos.z + gamma * this.v2.pos.z) * w;
+      const zDepth = alpha * this.v0.pos.z + beta * this.v1.pos.z + gamma * this.v2.pos.z;
 
-      const r = (alpha * this.v0.color.x + beta * this.v1.color.x + gamma * this.v2.color.x) * w;
-      const g = (alpha * this.v0.color.y + beta * this.v1.color.y + gamma * this.v2.color.y) * w;
-      const b = (alpha * this.v0.color.z + beta * this.v1.color.z + gamma * this.v2.color.z) * w;
+      const r = alpha * this.v0.color.x + beta * this.v1.color.x + gamma * this.v2.color.x;
+      const g = alpha * this.v0.color.y + beta * this.v1.color.y + gamma * this.v2.color.y;
+      const b = alpha * this.v0.color.z + beta * this.v1.color.z + gamma * this.v2.color.z;
 
       const color = new Vector3(r, g, b);
 
@@ -277,6 +303,7 @@ export class Triangle implements IMesh {
     const c1 =
       (x * (v[1].pos.y - v[2].pos.y) + (v[2].pos.x - v[1].pos.x) * y + v[1].pos.x * v[2].pos.y - v[2].pos.x * v[1].pos.y) /
       (v[0].pos.x * (v[1].pos.y - v[2].pos.y) + (v[2].pos.x - v[1].pos.x) * v[0].pos.y + v[1].pos.x * v[2].pos.y - v[2].pos.x * v[1].pos.y);
+
     const c2 =
       (x * (v[2].pos.y - v[0].pos.y) + (v[0].pos.x - v[2].pos.x) * y + v[2].pos.x * v[0].pos.y - v[0].pos.x * v[2].pos.y) /
       (v[1].pos.x * (v[2].pos.y - v[0].pos.y) + (v[0].pos.x - v[2].pos.x) * v[1].pos.y + v[2].pos.x * v[0].pos.y - v[0].pos.x * v[2].pos.y);
@@ -286,4 +313,8 @@ export class Triangle implements IMesh {
 
     return [c1, c2, c3];
   };
+
+  toString() {
+    return ``;
+  }
 }

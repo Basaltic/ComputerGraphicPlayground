@@ -17,8 +17,18 @@ export function clamp(v: number, min: number, max: number) {
 /**
  * 获取模型矩阵 - 也就是变换矩阵
  */
-export const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: number, x_rotation_angle: number) => {
-  const z_rad_angle = z_rotation_angle * DEG_TO_RAD;
+export const getModelMatrix = (
+  rotate?: { zRotationAngle?: number; yRotationAngle?: number; xRotationAngle?: number },
+  translate?: { tx?: number; ty?: number; tz?: number },
+  scale?: { sx?: number; sy?: number; sz?: number }
+) => {
+  const { zRotationAngle = 0, yRotationAngle = 0, xRotationAngle = 0 } = rotate || {};
+  const { tx = 0, ty = 0, tz = 0 } = translate || {};
+  const { sx = 0, sy = 0, sz = 0 } = scale || {};
+
+  const identity = Matrix4.identity();
+
+  const z_rad_angle = zRotationAngle * DEG_TO_RAD;
   const z_cos_value = Math.cos(z_rad_angle);
   const z_sin_value = Math.sin(z_rad_angle);
   const rotateByZMatrix = Matrix4.createBy2dArray([
@@ -28,7 +38,7 @@ export const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: numbe
     [0, 0, 0, 1]
   ]);
 
-  const y_rad_angle = y_rotation_angle * DEG_TO_RAD;
+  const y_rad_angle = yRotationAngle * DEG_TO_RAD;
   const y_cos_value = Math.cos(y_rad_angle);
   const y_sin_value = Math.sin(y_rad_angle);
   const rotateByYMatrix = Matrix4.createBy2dArray([
@@ -38,7 +48,7 @@ export const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: numbe
     [0, 0, 0, 1]
   ]);
 
-  const x_rad_angle = x_rotation_angle * DEG_TO_RAD;
+  const x_rad_angle = xRotationAngle * DEG_TO_RAD;
   const x_cos_value = Math.cos(x_rad_angle);
   const x_sin_value = Math.sin(x_rad_angle);
   const rotateByXMatrix = Matrix4.createBy2dArray([
@@ -48,7 +58,23 @@ export const getModelMatrix = (z_rotation_angle: number, y_rotation_angle: numbe
     [0, 0, 0, 1]
   ]);
 
-  return rotateByXMatrix.multiply(rotateByYMatrix).multiply(rotateByZMatrix);
+  const rotateMatrix = rotateByXMatrix.multiply(rotateByYMatrix).multiply(rotateByZMatrix);
+
+  const translateMatrix = Matrix4.createBy2dArray([
+    [1, 0, 0, tx],
+    [0, 1, 0, ty],
+    [0, 0, 1, tz],
+    [0, 0, 0, 1]
+  ]);
+
+  const scaleMatrix = Matrix4.createBy2dArray([
+    [sx, 0, 0, 0],
+    [0, sy, 0, 0],
+    [0, 0, sz, 0],
+    [0, 0, 0, 1]
+  ]);
+
+  return identity.multiply(translateMatrix).multiply(rotateMatrix).multiply(scaleMatrix);
 };
 
 /**
@@ -68,17 +94,19 @@ export const getViewMatrix = (eyePos: Vector3) => {
 /**
  * 获取投影矩阵
  *
- * @param eye_fov 摄像机的视野角度
- * @param aspect_ratio 宽长比
+ * @param eyeFov 摄像机的视野角度
+ * @param aspectRatio 宽长比
  * @param zNear 近平面距离（）
  * @param zFar 远平面距离
  */
-export const getProjectionMatrix = (eye_fov: number, aspect_ratio: number, zNear: number, zFar: number) => {
-  const radian_fov = eye_fov * DEG_TO_RAD;
+export const getProjectionMatrix = (eyeFov: number, aspectRatio: number, zNear: number, zFar: number) => {
+  const identity = Matrix4.identity();
+
+  const radian_fov = eyeFov * DEG_TO_RAD;
   const tan_fov = Math.tan(radian_fov / 2);
 
   const top = tan_fov * Math.abs(zNear);
-  const right = aspect_ratio * top;
+  const right = aspectRatio * top;
 
   const right_to_left = right * 2;
   const top_to_bottom = top * 2;
@@ -108,6 +136,6 @@ export const getProjectionMatrix = (eye_fov: number, aspect_ratio: number, zNear
     [0, 0, 1, 0]
   ]);
 
-  const proj = ortho.multiply(persp_to_ortho);
+  const proj = ortho.multiply(persp_to_ortho).multiply(identity);
   return proj;
 };

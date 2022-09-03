@@ -52,6 +52,10 @@ export class Vector4 {
     return new Vector3(this.x, this.y, this.z);
   }
 
+  toString() {
+    return `${this.x},${this.y},${this.z},${this.w},`;
+  }
+
   /**
    * 除一个数
    */

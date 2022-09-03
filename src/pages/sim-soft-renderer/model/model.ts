@@ -1,5 +1,6 @@
 import { Vector3 } from '../../../libs/math/vector3';
 import Mesh from '../../../libs/obj-loader/mesh';
+import { randomRgba } from '../core/color';
 import { Renderer } from '../core/renderer';
 import { IMesh } from './mesh';
 import { Triangle } from './triangle';
@@ -30,28 +31,27 @@ export class Model {
     // 转换为我们自己的模型结构
     const imeshes: IMesh[] = [];
     const vertices = mesh.vertices;
-    for (let i = 0; i < mesh.vertices.length; i += 9) {
-      const v1 = new Vector3(vertices[i], vertices[i + 1], vertices[i + 2] - 3);
-      const v2 = new Vector3(vertices[i + 3], vertices[i + 4], vertices[i + 5] - 3);
-      const v3 = new Vector3(vertices[i + 6], vertices[i + 7], vertices[i + 8] - 3);
 
-      console.log(v1.x, v1.y, v1.z);
-      console.log(v2.x, v2.y, v2.z);
-      console.log(v3.x, v3.y, v3.z);
+    for (let i = 0; i < mesh.indices.length; i += 3) {
+      const base = mesh.indices[i] * 3;
 
-      const c1 = Vector3.fromArray([235, 64, 52]);
-      const c2 = Vector3.fromArray([66, 135, 245]);
-      const c3 = Vector3.fromArray([245, 221, 66]);
+      const v1 = new Vector3(vertices[base], vertices[base + 1], vertices[base + 2]);
+      const v2 = new Vector3(vertices[base + 3], vertices[base + 4], vertices[base + 5]);
+      const v3 = new Vector3(vertices[base + 6], vertices[base + 7], vertices[base + 8]);
+
+      // const c1 = new Vector3(255, 255, 255);
+      const c1 = randomRgba();
+      // const c2 = randomRgba();
+      // const c3 = randomRgba();
 
       const vx1 = new Vertex(v1, c1);
-      const vx2 = new Vertex(v2, c2);
-      const vx3 = new Vertex(v3, c3);
+      const vx2 = new Vertex(v2, c1);
+      const vx3 = new Vertex(v3, c1);
 
       const triangle = new Triangle([vx1, vx2, vx3], renderer);
       imeshes.push(triangle);
     }
-    // console.log(imeshes);
 
-    return new Model(imeshes);
+    return new Model(new Vector3(0, 0, -10), imeshes);
   }
 }

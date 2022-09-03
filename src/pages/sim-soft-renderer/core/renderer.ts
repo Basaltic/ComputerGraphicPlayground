@@ -1,5 +1,4 @@
 import { Vector3 } from '../../../libs/math/vector3';
-import { getModelMatrix, getProjectionMatrix, getViewMatrix } from '../util/common';
 import { Bitmap } from './bitmap';
 import { Camera } from './camera';
 import { Color } from './color';
@@ -9,12 +8,6 @@ export type RendererConfigs = {
   height: number;
   camera: Camera;
 };
-
-let angle = 5;
-
-export function changeAngle() {
-  angle += 20;
-}
 
 /**
  * Draw to the screen
@@ -42,11 +35,6 @@ export class Renderer {
     this.camera = camera;
   }
 
-  clear() {
-    this.frameBuffer = new Bitmap(this.width, this.height);
-    this.zDepthBuffer = [];
-  }
-
   renderPixel(p: Vector3, c: Vector3) {
     const oldZDepth = this.zDepthBuffer[p.x + p.y * this.width];
     if (oldZDepth === undefined || oldZDepth < p.z) {
@@ -57,14 +45,8 @@ export class Renderer {
     }
   }
 
-  getMvp() {
-    const { eye, fovy, aspect, zfar, znear } = this.camera;
-
-    const view = getViewMatrix(eye);
-    const model = getModelMatrix(0, 0, 0);
-    const projection = getProjectionMatrix(fovy, aspect, znear, zfar);
-    const mvp = projection.multiply(view).multiply(model);
-
-    return mvp;
+  clear() {
+    this.frameBuffer = new Bitmap(this.width, this.height);
+    this.zDepthBuffer = [];
   }
 }

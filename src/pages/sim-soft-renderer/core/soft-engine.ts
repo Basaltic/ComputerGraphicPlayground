@@ -21,18 +21,19 @@ export class SoftEngine {
   /**
    * 加载场景世界
    */
-  loadScene(scene: Scene) {
+  load(scene?: Scene) {
+    if (!scene) return this;
+
     this.scene = scene;
+    !scene.inited && scene.init();
     return this;
   }
 
-  start() {
-    this.init();
-    this.run();
-  }
+  start(scene?: Scene) {
+    console.log('soft engine start ===');
+    this.load(scene);
 
-  init() {
-    this.scene?.init();
+    this.run();
   }
 
   update(delta: number) {
@@ -52,10 +53,9 @@ export class SoftEngine {
 
     this.render();
 
-    // requestAnimationFrame(() => this.run());
-    // setTimeout(() => {
-    //   this.run();
-    // }, 2000);
+    // requestAnimationFrame(this.run.bind(this));
+
+    // setTimeout(this.run.bind(this), 200);
   }
 
   render() {
@@ -63,7 +63,7 @@ export class SoftEngine {
 
     this.scene?.render();
 
-    console.log('render here');
+    console.log('render finished');
 
     const imageData = this.scene?.renderer.frameBuffer.toImageData();
     imageData && this.canvas.drawImage(imageData);

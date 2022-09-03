@@ -31,3 +31,15 @@ export class Color {
     return (rgb.x << 16) | (rgb.y << 8) | rgb.z;
   }
 }
+
+export function randomRgba() {
+  const round = Math.round;
+  const rand = Math.random;
+  const s = 255;
+  // return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+  const r = round(rand() * s);
+  const g = round(rand() * s);
+  const b = round(rand() * s);
+
+  return new Vector3(r, g, b);
+}

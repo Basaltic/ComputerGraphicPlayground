@@ -1,3 +1,5 @@
+import { Vector4 } from './vector4';
+
 /**
  * 向量（3维）
  */
@@ -18,6 +20,10 @@ export class Vector3 {
 
   constructor(x: number, y: number, z: number) {
     this.coord = [x, y, z];
+  }
+
+  clone() {
+    return new Vector3(this.x, this.y, this.z);
   }
 
   getMagnitude() {
@@ -78,11 +84,19 @@ export class Vector3 {
     return [this.x, this.y, this.z, 1];
   }
 
+  toVector4(): Vector4 {
+    return Vector4.fromArray([this.x, this.y, this.z, 1]);
+  }
+
   /**
    * 转换为数组
    */
   toArray(): number[] {
     return this.coord;
+  }
+
+  toString(): string {
+    return `${this.x}, ${this.y}, ${this.z}`;
   }
 
   /**
