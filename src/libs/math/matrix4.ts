@@ -105,6 +105,11 @@ export class Matrix4 {
     ];
   }
 
+  /**
+   * 乘法
+   *
+   * left(当前矩阵) * right
+   */
   multiply(right: Matrix4) {
     let res = new Matrix4();
 
@@ -131,6 +136,10 @@ export class Matrix4 {
     return res;
   }
 
+  /**
+   * 矩阵乘以向量
+   * left(matrix) * right(vector)
+   */
   multiplyVector(right: Vector3, w?: number) {
     let res = new Vector3(0, 0, 0, 1);
 

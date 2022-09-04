@@ -293,8 +293,4 @@ export class Triangle implements IMesh {
 
     return [c1, c2, c3];
   };
-
-  toString() {
-    return ``;
-  }
 }

@@ -54,7 +54,7 @@ export class SoftEngine {
 
     // requestAnimationFrame(this.run.bind(this));
 
-    setTimeout(this.run.bind(this), 100);
+    // setTimeout(this.run.bind(this), 100);
   }
 
   render() {

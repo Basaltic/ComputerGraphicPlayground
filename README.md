@@ -17,8 +17,8 @@ yarn dev
 
 ## Content
 
-| Page      | Description |
-| ----------- | ----------- |
-| Basic raster example | transformation & mvp & raster triangles & MSAA |
+- [x] mvp & math
+- [x] obj model load
+- [ ] material
 
 

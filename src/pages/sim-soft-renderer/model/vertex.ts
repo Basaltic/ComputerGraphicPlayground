@@ -1,6 +1,6 @@
+import { Matrix4 } from '../../../libs/math/matrix4';
 import { Vector2 } from '../../../libs/math/vector2';
 import { Vector3 } from '../../../libs/math/vector3';
-import { Color } from '../core/color';
 
 /**
  * 顶点

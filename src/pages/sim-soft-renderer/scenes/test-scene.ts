@@ -43,6 +43,7 @@ export class TestScene extends Scene {
       sz: 1.5
     };
 
-    // state.rotate.rz += 5;
+    state.rotate.rz += 5;
+    state.rotate.rx += 5;
   }
 }

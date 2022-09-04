@@ -20,8 +20,8 @@ export const SimSoftRendererPage = () => {
     if (context) {
       const canvas = new Canvas(context);
       const engine = new SoftEngine({ canvas: canvas });
-      const scene = new TestScene({ width: WIDTH, height: HEIGHT });
-      // const scene = new TestSceneWithModel1({ width: WIDTH, height: HEIGHT });
+      // const scene = new TestScene({ width: WIDTH, height: HEIGHT });
+      const scene = new TestSceneWithModel1({ width: WIDTH, height: HEIGHT });
 
       engine.start(scene);
     }
