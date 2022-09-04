@@ -1,5 +1,4 @@
 import { Vector3 } from './vector3';
-import { Vector4 } from './vector4';
 
 /**
  * 矩阵 4阶

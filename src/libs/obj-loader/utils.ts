@@ -154,7 +154,10 @@ export function downloadModels(models: DownloadModelsOptions[]): Promise<MeshMap
             // is resolved once all of the images it
             // contains are downloaded. These are then
             // attached to the map data objects
-            return Promise.all([Promise.resolve(material), downloadMtlTextures(material, root)]);
+            return Promise.all([Promise.resolve(material), downloadMtlTextures(material, root)]).then((res) => {
+              console.log(res);
+              return res;
+            });
           }
           return Promise.all([Promise.resolve(material), undefined]);
         })
