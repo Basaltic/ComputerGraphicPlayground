@@ -4,22 +4,16 @@ import { Vector4 } from './vector4';
  * 向量（3维）
  */
 export class Vector3 {
-  coord: number[];
+  x: number;
+  y: number;
+  z: number;
+  w: number;
 
-  get x() {
-    return this.coord[0];
-  }
-
-  get y() {
-    return this.coord[1];
-  }
-
-  get z() {
-    return this.coord[2];
-  }
-
-  constructor(x: number, y: number, z: number) {
-    this.coord = [x, y, z];
+  constructor(x: number, y: number, z: number, w?: number) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w || 1;
   }
 
   clone() {
@@ -92,7 +86,7 @@ export class Vector3 {
    * 转换为数组
    */
   toArray(): number[] {
-    return this.coord;
+    return [this.x, this.y, this.z];
   }
 
   toString(): string {

@@ -11,9 +11,9 @@ import { Vertex } from './vertex';
  */
 export class Model {
   pos: Vector3;
-  meshes: IMesh[];
+  meshes: Triangle[];
 
-  constructor(pos: Vector3, meshes: IMesh[]) {
+  constructor(pos: Vector3, meshes: Triangle[]) {
     this.pos = pos;
     this.meshes = meshes;
   }
@@ -29,7 +29,7 @@ export class Model {
     const mesh = new Mesh(obj);
 
     // 转换为我们自己的模型结构
-    const imeshes: IMesh[] = [];
+    const imeshes: Triangle[] = [];
     const vertices = mesh.vertices;
 
     for (let i = 0; i < mesh.indices.length; i += 3) {

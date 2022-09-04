@@ -1,4 +1,5 @@
 import { Vector3 } from '../../../libs/math/vector3';
+import { Triangle } from '../model/triangle';
 import { Bitmap } from './bitmap';
 import { Camera } from './camera';
 import { Color } from './color';
@@ -35,6 +36,11 @@ export class Renderer {
     this.camera = camera;
   }
 
+  clear() {
+    this.frameBuffer = new Bitmap(this.width, this.height);
+    this.zDepthBuffer = [];
+  }
+
   renderPixel(p: Vector3, c: Vector3) {
     const oldZDepth = this.zDepthBuffer[p.x + p.y * this.width];
     if (oldZDepth === undefined || oldZDepth < p.z) {
@@ -45,8 +51,10 @@ export class Renderer {
     }
   }
 
-  clear() {
-    this.frameBuffer = new Bitmap(this.width, this.height);
-    this.zDepthBuffer = [];
-  }
+  drawScene() {}
+
+  /**
+   * 绘制三角形
+   */
+  drawTriangle(triangle: Triangle) {}
 }

@@ -30,7 +30,6 @@ export class SoftEngine {
   }
 
   start(scene?: Scene) {
-    console.log('soft engine start ===');
     this.load(scene);
 
     this.run();
@@ -55,7 +54,7 @@ export class SoftEngine {
 
     // requestAnimationFrame(this.run.bind(this));
 
-    // setTimeout(this.run.bind(this), 200);
+    setTimeout(this.run.bind(this), 100);
   }
 
   render() {

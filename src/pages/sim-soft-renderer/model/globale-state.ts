@@ -35,7 +35,7 @@ const zfar = -50;
 export const state: State = {
   rotate: { rx: 0, ry: 0, rz: 0 },
   translate: { tx: 0, ty: 0, tz: 0 },
-  scale: { sx: 1, sy: 1, sz: 1 },
+  scale: { sx: 0.1, sy: 0.11, sz: 0.1 },
   camera: { eye, target, up, aspect, fovy, znear, zfar }
 };
 

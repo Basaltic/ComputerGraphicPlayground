@@ -1,6 +1,5 @@
 import { Scene } from '../core/scene';
 import { Model } from '../model/model';
-import { IMesh } from '../model/mesh';
 
 import obj from '../../../models/cube/cube.obj';
 // import obj from '../../../models/bunny/bunny.obj';
@@ -13,14 +12,10 @@ console.log(new Mesh(obj));
  *
  */
 export class TestSceneWithModel1 extends Scene {
-  meshes: IMesh[] = [];
-
   init() {
     const model = Model.load(obj, this.renderer);
 
     this.meshes = model.meshes;
-
-    // console.log(this.meshes);
   }
 
   update(delta: number): void {

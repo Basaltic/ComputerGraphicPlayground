@@ -47,17 +47,18 @@ export class Triangle implements IMesh {
    * 获取包围盒
    */
   getBoundingBox() {
-    const minX = Math.floor(Math.min(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
-    const maxX = Math.ceil(Math.max(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
-    const minY = Math.floor(Math.min(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
-    const maxY = Math.ceil(Math.max(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
+    const { width, height } = this.renderer;
+    let minX = Math.floor(Math.min(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
+    let maxX = Math.ceil(Math.max(this.v0.pos.x, this.v1.pos.x, this.v2.pos.x));
+    let minY = Math.floor(Math.min(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
+    let maxY = Math.ceil(Math.max(this.v0.pos.y, this.v1.pos.y, this.v2.pos.y));
 
-    return {
-      minX,
-      maxX,
-      minY,
-      maxY
-    };
+    minX = Math.max(0, minX);
+    maxX = Math.min(width, maxX);
+    minY = Math.max(0, minY);
+    maxY = Math.min(height, maxY);
+
+    return { minX, maxX, minY, maxY };
   }
 
   /**
@@ -70,6 +71,7 @@ export class Triangle implements IMesh {
    * @param y
    */
   isInside(x: number, y: number) {
+    // 方法1 - 判断点 p 和三个点组成的向量 和对应的边向量的差乘结果是否是同方向
     // const a = new Vector3(this.v0.pos.x, this.v0.pos.y, 1);
     // const b = new Vector3(this.v1.pos.x, this.v1.pos.y, 1);
     // const c = new Vector3(this.v2.pos.x, this.v2.pos.y, 1);
@@ -94,11 +96,10 @@ export class Triangle implements IMesh {
     // if (v12 == v23 && v23 == v31 && v1.z > 0) {
     //   return true;
     // }
-
     // return false;
 
+    // 方法2 - 计算Q点的重心坐标，如果计算出的值存在负数，表示在三角形外，反之则在三角形内。
     const [alpha, beta, gamma] = this.computeBarycentric2D(x, y);
-
     if (alpha > 0 && beta > 0 && gamma > 0) {
       return true;
     }
@@ -119,8 +120,6 @@ export class Triangle implements IMesh {
     const projection = getProjectionMatrix(fovy, aspect, znear, zfar);
     const mvp = projection.multiply(view).multiply(model);
 
-    console.log(model.values);
-
     return mvp;
   }
 
@@ -128,41 +127,24 @@ export class Triangle implements IMesh {
    * mvp变换
    */
   transformMVP(mvp: Matrix4) {
-    // console.log(this.v0.pos.toString());
-
-    const tm = Matrix4.createBy2dArray([
-      [1, 0, 0, 0],
-      [0, 1, 0, 0],
-      [0, 0, 1, 0],
-      [0, 0, 0, 1]
-    ]);
-
     // 普通的点转换为齐次坐标的点
-    const v0 = this.v0.pos.toVector4();
-    const v1 = this.v1.pos.toVector4();
-    const v2 = this.v2.pos.toVector4();
+    const v0 = this.v0.pos;
+    const v1 = this.v1.pos;
+    const v2 = this.v2.pos;
 
     // mvp变换
-    let v00 = tm.multiplyByVector4(v0);
-    let v11 = tm.multiplyByVector4(v1);
-    let v22 = tm.multiplyByVector4(v2);
-
-    console.log(tm.values, v0.toString(), v00.toString());
-
-    v00 = mvp.multiplyByVector4(v00);
-    v11 = mvp.multiplyByVector4(v11);
-    v22 = mvp.multiplyByVector4(v22);
+    let v00 = mvp.multiplyVector(v0, 1);
+    let v11 = mvp.multiplyVector(v1, 1);
+    let v22 = mvp.multiplyVector(v2, 1);
 
     // 齐次坐标归一
     v00 = v00.divide(v00.w);
     v11 = v11.divide(v11.w);
     v22 = v22.divide(v22.w);
 
-    console.log(mvp.values, v00.toString(), this.v0.pos.toString(), v00.w);
-
-    this.v0.pos = v00.toVec3();
-    this.v1.pos = v11.toVec3();
-    this.v2.pos = v22.toVec3();
+    this.v0.pos = v00;
+    this.v1.pos = v11;
+    this.v2.pos = v22;
   }
 
   /**
@@ -184,8 +166,6 @@ export class Triangle implements IMesh {
 
       vertex.pos = new Vector3(x, y, z);
     }
-
-    // console.log(this.v0.pos.toString());
   }
 
   render() {
@@ -194,7 +174,7 @@ export class Triangle implements IMesh {
     this.transfromViewport();
 
     const { minX, maxX, minY, maxY } = this.getBoundingBox();
-
+    // console.log(minX, maxX, minY, maxY);
     for (let i = minX; i < maxX; i++) {
       for (let j = minY; j < maxY; j++) {
         // 没有抗锯齿

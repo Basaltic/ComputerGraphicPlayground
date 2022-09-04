@@ -1,6 +1,7 @@
 import { Vector3 } from '../../../libs/math/vector3';
 import { getState } from '../model/globale-state';
 import { IMesh } from '../model/mesh';
+import { Triangle } from '../model/triangle';
 import { Camera } from './camera';
 import { Renderer } from './renderer';
 
@@ -9,7 +10,7 @@ import { Renderer } from './renderer';
  * Scene contains the logic to present the world
  */
 export abstract class Scene {
-  meshes: IMesh[] = [];
+  meshes: Triangle[] = [];
   camera: Camera;
   renderer: Renderer;
 

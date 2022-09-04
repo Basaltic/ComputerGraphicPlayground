@@ -31,7 +31,7 @@ export const getModelMatrix = (
   const z_rad_angle = zRotationAngle * DEG_TO_RAD;
   const z_cos_value = Math.cos(z_rad_angle);
   const z_sin_value = Math.sin(z_rad_angle);
-  const rotateByZMatrix = Matrix4.createBy2dArray([
+  const rotateByZMatrix = Matrix4.from2DArray([
     [z_cos_value, -z_sin_value, 0, 0],
     [z_sin_value, z_cos_value, 0, 0],
     [0, 0, 1, 0],
@@ -41,7 +41,7 @@ export const getModelMatrix = (
   const y_rad_angle = yRotationAngle * DEG_TO_RAD;
   const y_cos_value = Math.cos(y_rad_angle);
   const y_sin_value = Math.sin(y_rad_angle);
-  const rotateByYMatrix = Matrix4.createBy2dArray([
+  const rotateByYMatrix = Matrix4.from2DArray([
     [y_cos_value, 0, y_sin_value, 0],
     [0, 1, 0, 0],
     [-y_sin_value, 0, y_cos_value, 0],
@@ -51,7 +51,7 @@ export const getModelMatrix = (
   const x_rad_angle = xRotationAngle * DEG_TO_RAD;
   const x_cos_value = Math.cos(x_rad_angle);
   const x_sin_value = Math.sin(x_rad_angle);
-  const rotateByXMatrix = Matrix4.createBy2dArray([
+  const rotateByXMatrix = Matrix4.from2DArray([
     [1, 0, 0, 0],
     [0, x_cos_value, -x_sin_value, 0],
     [0, x_sin_value, x_cos_value, 0],
@@ -60,14 +60,14 @@ export const getModelMatrix = (
 
   const rotateMatrix = rotateByXMatrix.multiply(rotateByYMatrix).multiply(rotateByZMatrix);
 
-  const translateMatrix = Matrix4.createBy2dArray([
+  const translateMatrix = Matrix4.from2DArray([
     [1, 0, 0, tx],
     [0, 1, 0, ty],
     [0, 0, 1, tz],
     [0, 0, 0, 1]
   ]);
 
-  const scaleMatrix = Matrix4.createBy2dArray([
+  const scaleMatrix = Matrix4.from2DArray([
     [sx, 0, 0, 0],
     [0, sy, 0, 0],
     [0, 0, sz, 0],
@@ -82,7 +82,7 @@ export const getModelMatrix = (
  * @param eyePos
  */
 export const getViewMatrix = (eyePos: Vector3) => {
-  const viewTranslateMatrix = Matrix4.createBy2dArray([
+  const viewTranslateMatrix = Matrix4.from2DArray([
     [1, 0, 0, -eyePos.x],
     [0, 1, 0, -eyePos.y],
     [0, 0, 1, -eyePos.z],
@@ -114,13 +114,13 @@ export const getProjectionMatrix = (eyeFov: number, aspectRatio: number, zNear: 
 
   // 这里默认 摄像机 在z轴上，那么不需要 x & y 轴的平移了
   // 正交矩阵
-  const o1 = Matrix4.createBy2dArray([
+  const o1 = Matrix4.from2DArray([
     [2 / right_to_left, 0, 0, 0],
     [0, 2 / top_to_bottom, 0, 0],
     [0, 0, 2 / near_to_far, 0],
     [0, 0, 0, 1]
   ]);
-  const o2 = Matrix4.createBy2dArray([
+  const o2 = Matrix4.from2DArray([
     [1, 0, 0, 0],
     [0, 1, 0, 0],
     [0, 0, 1, -(zNear + zFar) / 2],
@@ -129,7 +129,7 @@ export const getProjectionMatrix = (eyeFov: number, aspectRatio: number, zNear: 
   const ortho = o1.multiply(o2);
 
   // 透视转为正交的矩阵
-  const persp_to_ortho = Matrix4.createBy2dArray([
+  const persp_to_ortho = Matrix4.from2DArray([
     [zNear, 0, 0, 0],
     [0, zNear, 0, 0],
     [0, 0, zNear + zFar, -zNear * zFar],
