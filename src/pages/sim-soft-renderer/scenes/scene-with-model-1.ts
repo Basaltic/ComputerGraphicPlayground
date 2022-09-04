@@ -3,10 +3,7 @@ import { Model } from '../model/model';
 
 import obj from '../../../models/cube/cube.obj';
 // import obj from '../../../models/bunny/bunny.obj';
-import Mesh from '../../../libs/obj-loader/mesh';
 import { getState } from '../model/globale-state';
-
-console.log(new Mesh(obj));
 
 /**
  *
