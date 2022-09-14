@@ -1,5 +1,6 @@
 import { Vector3 } from '../../../libs/math/vector3';
 import { HitRecord, Hittable } from './hittable';
+import { Material } from './material';
 import { Ray } from './ray';
 
 /**
@@ -15,9 +16,15 @@ export class Sphere implements Hittable {
    */
   radius: number;
 
-  constructor(center: Vector3, radius: number) {
+  /**
+   * 球体的材质属性
+   */
+  materialPtr: Material;
+
+  constructor(center: Vector3, radius: number, materialPtr: Material) {
     this.center = center;
     this.radius = radius;
+    this.materialPtr = materialPtr;
   }
 
   /**
@@ -51,6 +58,7 @@ export class Sphere implements Hittable {
     hitRecord.p = ray.at(hitRecord.t);
     const outwardNormal = hitRecord.p.sub(this.center).divide(this.radius);
     hitRecord.setFaceNormal(ray, outwardNormal);
+    hitRecord.materialPtr = this.materialPtr;
 
     return true;
   }

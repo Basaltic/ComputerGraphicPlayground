@@ -8,6 +8,7 @@ const HEIGHT = 225;
 
 /**
  * 光线追踪示例
+ * 1. 基础材质：漫反射材质
  */
 export const RayTracingTwoPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

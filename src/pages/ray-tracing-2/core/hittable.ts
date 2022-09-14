@@ -1,4 +1,5 @@
 import { Vector3 } from '../../../libs/math/vector3';
+import { Material } from './material';
 import { Ray } from './ray';
 
 /**
@@ -12,6 +13,10 @@ export class HitRecord {
    * 是否面朝外
    */
   frontFace!: boolean;
+  /**
+   * PTR材质，光线相交点
+   */
+  materialPtr!: Material;
 
   /**
    * 根据面向不同，设置不同的法线。
@@ -27,6 +32,7 @@ export class HitRecord {
     this.t = rec.t;
     this.normal = rec.normal;
     this.frontFace = rec.frontFace;
+    this.materialPtr = rec.materialPtr;
   }
 }
 

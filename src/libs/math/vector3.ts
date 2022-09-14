@@ -1,3 +1,4 @@
+import { randomNum } from '../utils/number';
 import { Vector4 } from './vector4';
 
 /**
@@ -18,6 +19,13 @@ export class Vector3 {
 
   clone() {
     return new Vector3(this.x, this.y, this.z);
+  }
+
+  copyFrom(v: Vector3) {
+    this.x = v.x;
+    this.y = v.y;
+    this.z = v.z;
+    this.w = v.w;
   }
 
   /**
@@ -67,8 +75,12 @@ export class Vector3 {
   /**
    * 乘一个数
    */
-  multiply(v: number) {
-    return new Vector3(this.x * v, this.y * v, this.z * v);
+  multiply(v: number | Vector3) {
+    if (v instanceof Vector3) {
+      return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z);
+    } else {
+      return new Vector3(this.x * v, this.y * v, this.z * v);
+    }
   }
 
   /**
@@ -87,10 +99,25 @@ export class Vector3 {
   }
 
   /**
+   * 反射
+   */
+  refect(n: Vector3) {
+    return this.sub(n.multiply(2 * this.dot(n)));
+  }
+
+  /**
    * 两个向量相等
    */
   equals(v: Vector3) {
     return this.x === v.x && this.y === v.x && this.z === v.z;
+  }
+
+  /**
+   * 是否接近0
+   */
+  nearZero(): boolean {
+    const s = 0.000000001;
+    return Math.abs(this.x) < s && Math.abs(this.y) < s && Math.abs(this.z) < s;
   }
 
   /**
@@ -160,6 +187,16 @@ export class Vector3 {
   }
 
   /**
+   * 反射
+   *
+   * @param v 入射
+   * @param n 法线
+   */
+  static refect(v: Vector3, n: Vector3) {
+    return v.sub(n.multiply(2 * v.dot(n)));
+  }
+
+  /**
    * 数组转换为向量
    *
    * @param v
@@ -167,5 +204,50 @@ export class Vector3 {
    */
   static fromArray(v: number[]) {
     return new Vector3(v[0], v[1], v[2]);
+  }
+
+  /**
+   * 随机生成一个向量
+   *
+   * @param min
+   * @param max
+   */
+  static random(min?: number, max?: number) {
+    if (min && max) {
+      new Vector3(randomNum(min, max), randomNum(min, max), randomNum(min, max));
+    }
+    return new Vector3(randomNum(), randomNum(), randomNum());
+  }
+
+  /**
+   * 随机获取一个在单位球体上一点的向量
+   */
+  static randomInUnitSphere() {
+    while (true) {
+      const p = Vector3.random(-1, 1);
+      if (p.getMagnitudeSquare() >= 1) continue;
+      return p;
+    }
+  }
+
+  /**
+   * 获取一个随机的单位向量
+   */
+  static randomUnitVector3() {
+    return this.randomInUnitSphere().normalized();
+  }
+
+  /**
+   * 随机获取一个在半球体上一点的向量
+   */
+  static randomInHemisphere(normal: Vector3) {
+    const inUnitSphere = Vector3.randomInUnitSphere();
+    // 大于 0 表示相差【0，180】度之间，也就是在同一个半球面，直接使用该向量
+    // 其他情况的话，表示在相反的半球面，取反到同一个半球面，提高采样效率
+    if (inUnitSphere.dot(normal) > 0) {
+      return inUnitSphere;
+    } else {
+      return inUnitSphere.multiply(-1);
+    }
   }
 }

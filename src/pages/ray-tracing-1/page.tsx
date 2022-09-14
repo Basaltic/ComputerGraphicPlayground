@@ -8,6 +8,8 @@ const HEIGHT = 225;
 
 /**
  * 光线追踪示例
+ * 1. 基本的光线追踪实现
+ * 2. 光线相交、球体
  */
 export const RayTracingOnePage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -6,13 +6,18 @@ import { Vector3 } from '../../../libs/math/vector3';
 export class Ray {
   // 光线的起点，3D空间中的一个位置
   // origin of the light
-  origin: Vector3;
+  origin!: Vector3;
   // 光线的方向
-  direction: Vector3;
+  direction!: Vector3;
 
   constructor(o: Vector3, d: Vector3) {
     this.origin = o;
     this.direction = d;
+  }
+
+  copyFrom(ray: Ray) {
+    this.origin = ray.origin;
+    this.direction = ray.direction;
   }
 
   /**

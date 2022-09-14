@@ -29,6 +29,11 @@ export function convertRGBToHex(r: number, g: number, b: number, samplesPerPixel
   g /= samplesPerPixel;
   b /= samplesPerPixel;
 
+  // gamma校正，近似 gamma = 2.0，https://en.wikipedia.org/wiki/Gamma_correction
+  r = Math.sqrt(r);
+  g = Math.sqrt(g);
+  b = Math.sqrt(b);
+
   r = clamp(r, 0, 0.999);
   g = clamp(g, 0, 0.999);
   b = clamp(b, 0, 0.999);

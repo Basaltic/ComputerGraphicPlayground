@@ -1,11 +1,12 @@
 import { Vector3 } from '../../../libs/math/vector3';
 import { Bitmap } from '../../../libs/utils/bitmap';
 import { Canvas } from '../../../libs/utils/canvas';
-import { convertRGBToHex } from '../../../libs/utils/color';
+import { Color, convertRGBToHex } from '../../../libs/utils/color';
 import { randomNum } from '../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
 import { HittableList } from './hittable-list';
+import { Lambertian, Metal } from './material';
 import { Ray } from './ray';
 import { Sphere } from './sphere';
 
@@ -29,12 +30,21 @@ export class RayTracingRenderer {
   run() {
     // 屏幕定义，宽高
     const { width, height } = this.canvas;
-    const samplesPerPixel = 10;
+    const samplesPerPixel = 100;
+    // 控制光线最大的折射次数
+    const maxDepth = 50;
 
     // 世界场景
     const world = new HittableList();
-    world.add(new Sphere(new Vector3(0, -100.5, -1), 100));
-    world.add(new Sphere(new Vector3(0, 0, -1), 0.5));
+    const materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
+    const materialCenter = new Lambertian(new Color(0.7, 0.3, 0.3));
+    const materialLeft = new Metal(new Color(0.8, 0.8, 0.8));
+    const materialRight = new Metal(new Color(0.8, 0.6, 0.2));
+
+    world.add(new Sphere(new Vector3(0, -100.5, -1), 100, materialGround));
+    world.add(new Sphere(new Vector3(-1, 0, -1), 0.5, materialLeft));
+    world.add(new Sphere(new Vector3(1, 0, -1), 0.5, materialRight));
+    world.add(new Sphere(new Vector3(0, 0, -1), 0.5, materialCenter));
 
     // 相机 camera
     const camera: Camera = new Camera();
@@ -51,7 +61,7 @@ export class RayTracingRenderer {
           const v = (j + randomNum()) / (height - 1);
 
           const ray = camera.getRay(u, v);
-          const samplePixelColor = rayColor(ray, world);
+          const samplePixelColor = rayColor(ray, world, maxDepth);
           color = color.add(samplePixelColor);
         }
 
@@ -68,11 +78,23 @@ export class RayTracingRenderer {
 /**
  * 通过光线求交来获取颜色
  */
-function rayColor(ray: Ray, world: Hittable): Vector3 {
+function rayColor(ray: Ray, world: Hittable, depth: number): Vector3 {
   let hitRecord: HitRecord = new HitRecord();
 
-  if (world.hit(ray, 0, Infinity, hitRecord)) {
-    return hitRecord.normal.add(new Vector3(1, 1, 1)).multiply(0.5);
+  // 限制光线折射的次数
+  if (depth <= 0) {
+    return new Color(0, 0, 0);
+  }
+
+  // 0.001 是为了浮点数精度的原因，会导致后续计算某些情况下 t < 0的情况出现导致结果不够精准
+  if (world.hit(ray, 0.001, Infinity, hitRecord)) {
+    const [success, attenuation, scattered] = hitRecord.materialPtr.scatter(ray, hitRecord);
+    if (success) {
+      const c = rayColor(scattered, world, depth - 1).multiply(attenuation);
+      return c;
+    }
+
+    return new Color(0, 0, 0);
   }
 
   // 这里简单的生成逻辑，后续会改为通过相交物体的颜色来确定
@@ -80,6 +102,6 @@ function rayColor(ray: Ray, world: Hittable): Vector3 {
 
   // 时间和光线的y轴有关
   const t = 0.5 * (unitDir.y + 1);
-  const color = new Vector3(1, 1, 1).multiply(1 - t).add(new Vector3(0.5 * 1, 0.7 * 1, 1).multiply(t));
+  const color = new Vector3(1, 1, 1).multiply(1 - t).add(new Vector3(0.5, 0.7, 1).multiply(t));
   return color;
 }
