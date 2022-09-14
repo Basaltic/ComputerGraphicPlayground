@@ -20,6 +20,17 @@ export class Vector3 {
     return new Vector3(this.x, this.y, this.z);
   }
 
+  /**
+   * 长度平方
+   * @returns
+   */
+  getMagnitudeSquare() {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
+  }
+
+  /**
+   * 获取长度
+   */
   getMagnitude() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
   }
@@ -67,17 +78,31 @@ export class Vector3 {
     return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
   }
 
+  /**
+   * 减向量
+   * @param v
+   */
+  sub(v: Vector3) {
+    return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
+  }
+
+  /**
+   * 两个向量相等
+   */
   equals(v: Vector3) {
     return this.x === v.x && this.y === v.x && this.z === v.z;
   }
 
   /**
-   * 转换为齐次坐标数组
+   * 转换为齐次坐标4阶向量
    */
-  toHomoVec4Array() {
-    return [this.x, this.y, this.z, 1];
+  toHomoVec4() {
+    return Vector4.fromArray([this.x, this.y, this.z, 1]);
   }
 
+  /**
+   * 转换成4阶向量
+   */
   toVector4(): Vector4 {
     return Vector4.fromArray([this.x, this.y, this.z, 1]);
   }
