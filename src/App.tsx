@@ -13,6 +13,7 @@ import { RayTracing2 } from './pages/ray-tracing/ray-tracing-2/page';
 import { RayTracing3 } from './pages/ray-tracing/ray-tracing-3/page';
 import { RayTracing4 } from './pages/ray-tracing/ray-tracing-4/page';
 import { RayTracing5 } from './pages/ray-tracing/ray-tracing-5/page';
+import { RayTracing6 } from './pages/ray-tracing/ray-tracing-6/page';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/ray-tracing-3" element={<RayTracing3 />} />
           <Route path="/ray-tracing-4" element={<RayTracing4 />} />
           <Route path="/ray-tracing-5" element={<RayTracing5 />} />
+          <Route path="/ray-tracing-6" element={<RayTracing6 />} />
 
           {/* webgl */}
           <Route path="/webgl/playground1" element={<WebglPlayground1Page1 />} />
