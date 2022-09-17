@@ -8,9 +8,10 @@ import { SimSoftRendererPage } from './pages/rasterization/page';
 import WebglPlaygroundPage2 from './pages/webgl/playground/playground2.page';
 import WebglPlayground1Page1 from './pages/webgl/playground/playground1.page';
 import WebglPlaygroundPage3 from './pages/webgl/playground/playground3/payground3.page';
-import { RayTracingOnePage } from './pages/ray-tracing-1/page';
-import { RayTracingTwoPage } from './pages/ray-tracing-2/page';
-import { RayTracingThreePage } from './pages/ray-tracing-3/page';
+import { RayTracing1 } from './pages/ray-tracing/ray-tracing-1/page';
+import { RayTracing2 } from './pages/ray-tracing/ray-tracing-2/page';
+import { RayTracing3 } from './pages/ray-tracing/ray-tracing-3/page';
+import { RayTracing4 } from './pages/ray-tracing/ray-tracing-4/page';
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
           {/* 软光栅化 */}
           <Route path="/rasterization" element={<SimSoftRendererPage />} />
           {/* 光线追踪 */}
-          <Route path="/ray-tracing-1" element={<RayTracingOnePage />} />
-          <Route path="/ray-tracing-2" element={<RayTracingTwoPage />} />
-          <Route path="/ray-tracing-3" element={<RayTracingThreePage />} />
+          <Route path="/ray-tracing-1" element={<RayTracing1 />} />
+          <Route path="/ray-tracing-2" element={<RayTracing1 />} />
+          <Route path="/ray-tracing-3" element={<RayTracing3 />} />
+          <Route path="/ray-tracing-4" element={<RayTracing4 />} />
 
           {/* webgl */}
           <Route path="/webgl/playground1" element={<WebglPlayground1Page1 />} />

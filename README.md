@@ -1,6 +1,7 @@
-# Computer Graphic Playground
+# Computer Graphic Playground (CGP)
 
-Writing A Renderer From Scratch Using Canvas as Screen Simulator
+A Personal Computer Graphic Learning Playground
+- Writing A Renderer From Scratch Using Canvas as Screen Simulator
 
 
 ## Purpose of this repo
