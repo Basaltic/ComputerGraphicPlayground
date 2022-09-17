@@ -1,5 +1,5 @@
 import { Vector3 } from '../math/vector3';
-import { clamp } from './number';
+import { clamp, randomNum } from './number';
 
 /**
  * 颜色类，其实就是向量的alias
@@ -24,7 +24,11 @@ export class Color extends Vector3 {
  * @param
  * @returns
  */
-export function convertRGBToHex(r: number, g: number, b: number, samplesPerPixel: number = 1) {
+export function convertRGBToHex(r: number, g: number, b: number) {
+  return (r << 16) | (g << 8) | b;
+}
+
+export function writeColor(r: number, g: number, b: number, samplesPerPixel: number = 1) {
   r /= samplesPerPixel;
   g /= samplesPerPixel;
   b /= samplesPerPixel;
@@ -38,9 +42,8 @@ export function convertRGBToHex(r: number, g: number, b: number, samplesPerPixel
   g = clamp(g, 0, 0.999);
   b = clamp(b, 0, 0.999);
 
-  r *= 255.999;
-  g *= 255.999;
-  b *= 255.999;
-
-  return (r << 16) | (g << 8) | b;
+  r *= 256;
+  g *= 256;
+  b *= 256;
+  return convertRGBToHex(r, g, b);
 }

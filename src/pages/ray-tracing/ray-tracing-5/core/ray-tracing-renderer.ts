@@ -1,20 +1,25 @@
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
-import { Color, convertRGBToHex, writeColor } from '../../../../libs/utils/color';
+import { Color, writeColor } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
-import { HittableList } from './hittable-list';
-import { Dielectric, Lambertian, Metal } from './material';
 import { Ray } from './ray';
-import { Sphere } from './sphere';
+import { randomWorld } from './world';
+
+export interface RendererConfig {
+  aspectRatio: number;
+}
 
 export class RayTracingRenderer {
   canvas: Canvas;
 
-  constructor(ele: HTMLCanvasElement) {
+  configs: RendererConfig;
+
+  constructor(ele: HTMLCanvasElement, configs: RendererConfig) {
     this.canvas = new Canvas(ele);
+    this.configs = configs;
   }
 
   /**
@@ -28,31 +33,27 @@ export class RayTracingRenderer {
    * 入口
    */
   run() {
-    // 屏幕定义，宽高
+    // 1. 屏幕定义，宽高，等其他参数定义
     const { width, height } = this.canvas;
-    const samplesPerPixel = 100;
+
+    const aspectRatio = this.configs.aspectRatio;
+
+    const samplesPerPixel = 10;
     // 控制光线最大的折射次数
     const maxDepth = 50;
 
-    // 世界场景
-    const world = new HittableList();
-    const materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
-    const materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
-    const materialLeft = new Dielectric(2.0);
-    const materialRight = new Metal(new Color(0.8, 0.6, 0.2), 0.0);
+    // 2. 世界场景
+    const world = randomWorld();
 
-    world.add(new Sphere(new Vector3(0, -100.5, -1), 100, materialGround));
-    world.add(new Sphere(new Vector3(-1, 0, -1), 0.5, materialLeft));
-    // 给一个负的半径模拟中空的效果
-    world.add(new Sphere(new Vector3(-1, 0, -1), -0.4, materialLeft));
+    // 3. 相机 camera
+    const lf = new Vector3(13, 2, 3);
+    const la = new Vector3(0, 0, 0);
+    const up = new Vector3(0, 1, 0);
+    const focusDistance = 10;
+    const aperture = 0.1;
+    const camera: Camera = new Camera(lf, la, up, 20, aspectRatio, aperture, focusDistance);
 
-    world.add(new Sphere(new Vector3(1, 0, -1), 0.5, materialRight));
-    world.add(new Sphere(new Vector3(0, 0, -1), 0.5, materialCenter));
-
-    // 相机 camera
-    const camera: Camera = new Camera();
-
-    // 真实绘制像素到屏幕中
+    // 4. 真实绘制像素到屏幕中
     const bitmap = new Bitmap(width, height);
     for (let j = height - 1; j >= 0; j -= 1) {
       console.log(`remaining: ${j}`);

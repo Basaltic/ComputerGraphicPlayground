@@ -1,7 +1,7 @@
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
-import { Color, convertRGBToHex } from '../../../../libs/utils/color';
+import { Color, convertRGBToHex, writeColor } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
@@ -75,7 +75,7 @@ export class RayTracingRenderer {
           color = color.add(samplePixelColor);
         }
 
-        const colorHex = convertRGBToHex(color.x, color.y, color.z, samplesPerPixel);
+        const colorHex = writeColor(color.x, color.y, color.z, samplesPerPixel);
         bitmap.set(i, height - j - 1, colorHex);
       }
     }
