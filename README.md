@@ -17,8 +17,9 @@ yarn dev
 
 ## Content
 
-- [x] mvp & math
-- [x] obj model load
-- [ ] material
+- rasterization
+- ray tracing 1
+- ray tracing 2
+- ray tracing 3
 
 

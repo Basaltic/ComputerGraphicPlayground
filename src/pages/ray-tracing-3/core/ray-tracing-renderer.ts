@@ -28,13 +28,16 @@ export class RayTracingRenderer {
    * 入口
    */
   run() {
-    // 屏幕定义，宽高
+    // 1. 屏幕定义，宽高，等其他参数定义
     const { width, height } = this.canvas;
+
+    const aspectRatio = 16 / 9;
+
     const samplesPerPixel = 100;
     // 控制光线最大的折射次数
     const maxDepth = 50;
 
-    // 世界场景
+    // 2. 世界场景
     const world = new HittableList();
     const materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
     const materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
@@ -44,15 +47,17 @@ export class RayTracingRenderer {
     world.add(new Sphere(new Vector3(0, -100.5, -1), 100, materialGround));
     world.add(new Sphere(new Vector3(-1, 0, -1), 0.5, materialLeft));
     // 给一个负的半径模拟中空的效果
-    world.add(new Sphere(new Vector3(-1, 0, -1), -0.4, materialLeft));
-
+    world.add(new Sphere(new Vector3(-1, 0, -1), -0.45, materialLeft));
     world.add(new Sphere(new Vector3(1, 0, -1), 0.5, materialRight));
     world.add(new Sphere(new Vector3(0, 0, -1), 0.5, materialCenter));
 
-    // 相机 camera
-    const camera: Camera = new Camera();
+    // 3. 相机 camera
+    const lf = new Vector3(-2, 2, 1);
+    const la = new Vector3(0, 0, -1);
+    const up = new Vector3(0, 1, 0);
+    const camera: Camera = new Camera(lf, la, up, 20, aspectRatio);
 
-    // 真实绘制像素到屏幕中
+    // 4. 真实绘制像素到屏幕中
     const bitmap = new Bitmap(width, height);
     for (let j = height - 1; j >= 0; j -= 1) {
       console.log(`remaining: ${j}`);

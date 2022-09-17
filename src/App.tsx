@@ -10,6 +10,7 @@ import WebglPlayground1Page1 from './pages/webgl/playground/playground1.page';
 import WebglPlaygroundPage3 from './pages/webgl/playground/playground3/payground3.page';
 import { RayTracingOnePage } from './pages/ray-tracing-1/page';
 import { RayTracingTwoPage } from './pages/ray-tracing-2/page';
+import { RayTracingThreePage } from './pages/ray-tracing-3/page';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           {/* 光线追踪 */}
           <Route path="/ray-tracing-1" element={<RayTracingOnePage />} />
           <Route path="/ray-tracing-2" element={<RayTracingTwoPage />} />
+          <Route path="/ray-tracing-3" element={<RayTracingThreePage />} />
 
           {/* webgl */}
           <Route path="/webgl/playground1" element={<WebglPlayground1Page1 />} />

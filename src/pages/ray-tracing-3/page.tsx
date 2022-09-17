@@ -8,9 +8,10 @@ const HEIGHT = 225;
 
 /**
  * 光线追踪示例
- * 1. 漫反射材质、金属材质、玻璃材质
+ * 1. 相机定位
+ * 2. 景深（depth of field）| 散焦模糊 （defocus blur）
  */
-export const RayTracingTwoPage = () => {
+export const RayTracingThreePage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

@@ -52,6 +52,13 @@ export class Vector3 {
   }
 
   /**
+   * 获取相反的向量
+   */
+  reserve() {
+    return this.clone().multiply(-1);
+  }
+
+  /**
    * 点乘
    */
   dot(b: Vector3) {
@@ -101,7 +108,7 @@ export class Vector3 {
   /**
    * 反射
    */
-  refect(n: Vector3) {
+  reflect(n: Vector3) {
     return this.sub(n.multiply(2 * this.dot(n)));
   }
 
@@ -192,8 +199,25 @@ export class Vector3 {
    * @param v 入射
    * @param n 法线
    */
-  static refect(v: Vector3, n: Vector3) {
+  static reflect(v: Vector3, n: Vector3) {
     return v.sub(n.multiply(2 * v.dot(n)));
+  }
+
+  /**
+   * 折射，snell law
+   *
+   * @param uv 入射向量
+   * @param n 法线
+   * @param etaiOverEtat 折射率，是一个比值
+   */
+  static refract(uv: Vector3, n: Vector3, etaiOverEtat: number) {
+    const cosTheta = Math.min(Vector3.dotProduct(uv.multiply(-1), n), 1);
+    // etaiOverEtat * (uv + cosTheta * n)
+    // 折射光分解为两个向量
+    //  - 垂直于法线和平行于法线
+    const rOutPerp = uv.add(n.multiply(cosTheta)).multiply(etaiOverEtat);
+    const rOutParallel = n.multiply(-Math.sqrt(Math.abs(1 - rOutPerp.getMagnitudeSquare())));
+    return rOutPerp.add(rOutParallel);
   }
 
   /**
@@ -248,6 +272,18 @@ export class Vector3 {
       return inUnitSphere;
     } else {
       return inUnitSphere.multiply(-1);
+    }
+  }
+
+  /**
+   * 随机在一个单位圆盘上获取一个点
+   */
+  static randomInUnitDisk() {
+    while (true) {
+      const p = new Vector3(randomNum(-1, 1), randomNum(-1, 1), 0);
+      if (p.getMagnitudeSquare() > 1) continue;
+
+      return p;
     }
   }
 }
