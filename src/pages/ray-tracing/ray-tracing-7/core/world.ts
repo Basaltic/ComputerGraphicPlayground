@@ -62,9 +62,12 @@ export function randomWorld(): World {
   const mat3 = new Metal(new Color(0.7, 0.6, 0.5), 0);
   const sph3 = new Sphere(new Vector3(4, 1, 0), 1, mat3);
 
-  world.add(sph2);
   world.add(sph1);
+  world.add(sph2);
   world.add(sph3);
 
-  return new HittableList([new BVHNode(world.hittableList, 0, 1)]);
+  // return world;
+  const bvh = new BVHNode(world.hittableList, 0, 1);
+  console.log(bvh);
+  return new HittableList([bvh]);
 }

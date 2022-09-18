@@ -32,7 +32,7 @@ export class BVHNode implements Hittable {
     // 0: x, 1: y, 2: z
     const axis = randomInt(0, 2);
 
-    const compare = (a: Hittable, b: Hittable) => boxCompare(a, b, axis);
+    const boxCompare = (a: Hittable, b: Hittable) => boxCompareFunc(a, b, axis);
 
     // 剩余对象数量
     const objectSpan = hittableObjList.length;
@@ -40,7 +40,7 @@ export class BVHNode implements Hittable {
     if (objectSpan === 1) {
       this.left = this.right = hittableObjList[0];
     } else if (objectSpan === 2) {
-      if (compare(hittableObjList[0], hittableObjList[1]) < 0) {
+      if (boxCompare(hittableObjList[0], hittableObjList[1]) < 0) {
         this.left = hittableObjList[0];
         this.right = hittableObjList[1];
       } else {
@@ -48,7 +48,7 @@ export class BVHNode implements Hittable {
         this.right = hittableObjList[0];
       }
     } else {
-      hittableObjList = hittableObjList.sort(compare);
+      hittableObjList = hittableObjList.sort(boxCompare);
 
       const mid = Math.floor(hittableObjList.length / 2);
 
@@ -73,7 +73,7 @@ export class BVHNode implements Hittable {
     }
 
     const leftHitted = this.left.hit(ray, tMin, tMax);
-    const rightHitted = this.right.hit(ray, tMin, tMax);
+    const rightHitted = this.right.hit(ray, tMin, leftHitted ? leftHitted.t : tMax);
 
     return leftHitted || rightHitted;
   }
@@ -83,12 +83,13 @@ export class BVHNode implements Hittable {
   }
 }
 
-function boxCompare(a: Hittable, b: Hittable, axis: number): number {
+function boxCompareFunc(a: Hittable, b: Hittable, axis: number): number {
   const boxA = a.boundingBox(0, 0);
   const boxB = b.boundingBox(0, 0);
   if (!boxA || !boxB) {
     throw new Error('No bounding box');
   }
 
-  return boxA.minimum.values[axis] - boxB.minimum.values[axis];
+  // return boxA.minimum.values[axis] - boxB.minimum.values[axis];
+  return boxB.minimum.values[axis] - boxA.minimum.values[axis];
 }
