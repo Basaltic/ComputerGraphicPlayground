@@ -29,7 +29,6 @@ export const SimSoftRendererPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('errr');
     downloadModels([
       {
         obj: 'http://127.0.0.1:5173/models/cube/cube.obj',

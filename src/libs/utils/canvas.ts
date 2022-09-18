@@ -74,68 +74,12 @@ export class Canvas {
   }
 
   /**
-   * 把uint32array转换为图像数据并绘制到画布中
-   *
-   * @param buf
-   * @param w
-   * @param h
-   * @param scale
-   */
-  drawImageFromArray(buf: Uint32Array, w: number, h: number, scale: number = 1) {
-    const imageData = this.toImageData(buf, w, h, scale);
-    this.drawImage(imageData);
-  }
-
-  /**
    * 绘制bitmap到画布中
    *
    * @param bitmap
    */
   drawImageFromBitmap(bitmap: Bitmap) {
-    this.drawImageFromArray(bitmap.buffer, bitmap.w, bitmap.h);
-  }
-
-  /**
-   * 把位图转换为图片数据
-   * Convert Bitmap to Image Data
-   *
-   * @param scale
-   * @returns
-   */
-  toImageData(buf: Uint32Array, w: number, h: number, scale: number = 1) {
-    const imageData = new ImageData(w * scale, h * scale);
-
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const bitmapPixel = buf[x + y * w];
-
-        const r = (bitmapPixel >> 16) & 0xff;
-        const g = (bitmapPixel >> 8) & 0xff;
-        const b = bitmapPixel & 0xff;
-
-        if (scale == 1) {
-          const ptr = (x * scale + y * scale * imageData.width) * 4;
-
-          imageData.data[ptr] = r;
-          imageData.data[ptr + 1] = g;
-          imageData.data[ptr + 2] = b;
-          imageData.data[ptr + 3] = 255;
-          continue;
-        }
-
-        for (let ys = 0; ys < scale; ys++) {
-          for (let xs = 0; xs < scale; xs++) {
-            const ptr = (x * scale + xs + (y * scale + ys) * imageData.width) * 4;
-
-            imageData.data[ptr] = r;
-            imageData.data[ptr + 1] = g;
-            imageData.data[ptr + 2] = b;
-            imageData.data[ptr + 3] = 255;
-          }
-        }
-      }
-    }
-
-    return imageData;
+    const imageData = bitmap.toImageData();
+    this.drawImage(imageData);
   }
 }
