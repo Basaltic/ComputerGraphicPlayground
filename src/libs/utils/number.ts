@@ -8,6 +8,10 @@ export function randomNum(min?: number, max?: number) {
   return Math.random();
 }
 
+export function randomInt(min: number, max: number) {
+  return Math.floor(randomNum(min, max));
+}
+
 /**
  * 数字裁剪
  *

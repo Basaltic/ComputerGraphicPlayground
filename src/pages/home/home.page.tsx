@@ -35,6 +35,12 @@ export default function HomePage() {
         <List.Item>
           <Link to="/ray-tracing-4">光线追踪渲染器5</Link>
         </List.Item>
+        <List.Item>
+          <Link to="/ray-tracing-4">光线追踪渲染器6</Link>
+        </List.Item>
+        <List.Item>
+          <Link to="/ray-tracing-4">光线追踪渲染器7</Link>
+        </List.Item>
       </List>
     </HomeContainer>
   );

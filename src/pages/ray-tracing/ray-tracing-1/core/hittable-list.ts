@@ -22,7 +22,7 @@ export class HittableList implements Hittable {
     let closestSoFar = tMax;
 
     for (const hittableObj of this.hittableList) {
-      if (hittableObj.hit(ray, tMin, tMax, tempHitRecord)) {
+      if (hittableObj.hit(ray, tMin, closestSoFar, tempHitRecord)) {
         hitAnything = true;
         closestSoFar = tempHitRecord.t;
         hitRecord.setAll(tempHitRecord);

@@ -17,6 +17,10 @@ export class Vector3 {
     this.w = w || 1;
   }
 
+  get values() {
+    return [this.x, this.y, this.z, this.w];
+  }
+
   clone() {
     return new Vector3(this.x, this.y, this.z);
   }
