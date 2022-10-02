@@ -69,6 +69,12 @@ export class Bitmap {
     return imageData;
   }
 
+  /**
+   * 加载图片并转换成自定义的bitmap
+   *
+   * @param imageElement
+   * @returns
+   */
   static fromImage(imageElement: HTMLImageElement): Bitmap {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext && canvas.getContext('2d');
@@ -80,7 +86,10 @@ export class Bitmap {
 
     const bitmap = new Bitmap(width, height);
 
-    context.drawImage(imageElement, 0, 0);
+    canvas.setAttribute('width', width + 'px');
+    canvas.setAttribute('height', height + 'px');
+
+    context.drawImage(imageElement, 0, 0, width, height);
 
     const imageData = context.getImageData(0, 0, width, height);
 
@@ -91,6 +100,7 @@ export class Bitmap {
         const b = imageData.data[(x + y * width) * 4 + 2];
 
         const color = (r << 16) | (g << 8) | b;
+        // console.log(x, y, color);
         bitmap.set(x, y, color);
       }
     }

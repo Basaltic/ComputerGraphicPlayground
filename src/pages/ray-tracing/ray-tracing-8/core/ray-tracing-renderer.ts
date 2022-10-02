@@ -6,7 +6,7 @@ import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
 import { Ray } from './ray';
-import { randomWorld, twoSphereWorld, World } from './world';
+import { earthSphereWorld, randomWorld, twoPerlinSphereWorld, twoSphereWorld, World } from './world';
 
 export interface RendererConfig {
   aspectRatio: number;
@@ -32,7 +32,7 @@ export class RayTracingRenderer {
   /**
    * 入口
    */
-  run() {
+  async run() {
     // 1. 屏幕定义，宽高，等其他参数定义
     const { width, height } = this.canvas;
 
@@ -64,10 +64,21 @@ export class RayTracingRenderer {
         aperture = 0.1;
         break;
       case 2:
-      default:
         world = twoSphereWorld();
         lf = new Vector3(13, 2, 3);
         la = new Vector3(0, 0, 0);
+        break;
+      case 3:
+        world = twoPerlinSphereWorld();
+        lf = new Vector3(13, 2, 3);
+        la = new Vector3(0, 0, 0);
+        fov = 20;
+        break;
+      default:
+        world = await earthSphereWorld();
+        lf = new Vector3(13, 2, 3);
+        la = new Vector3(0, 0, 0);
+        fov = 20;
         break;
     }
 

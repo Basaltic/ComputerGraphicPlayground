@@ -4,7 +4,7 @@ import { TestScene } from './scenes/test-scene';
 import { Canvas } from './util/canvas';
 
 import { TestSceneWithModel1 } from './scenes/scene-with-model-1';
-import { downloadModels } from '../../libs/obj-loader/utils';
+import { downloadModels } from '../../libs/third-party/obj-loader/utils';
 
 const WIDTH = 400;
 const HEIGHT = 400;

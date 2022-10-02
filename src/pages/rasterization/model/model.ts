@@ -1,7 +1,7 @@
 import { Vector2 } from '../../../libs/math/vector2';
 import { Vector3 } from '../../../libs/math/vector3';
-import Mesh from '../../../libs/obj-loader/mesh';
-import { randomRgba } from '../core/color';
+import Mesh from '../../../libs/third-party/obj-loader/mesh';
+import { randomRgb } from '../core/color';
 import { Renderer } from '../core/renderer';
 import { Triangle } from './triangle';
 import { Vertex } from './vertex';
@@ -53,9 +53,9 @@ export class Model {
       const uv3 = new Vector2(textures[uvBase + 4], textures[uvBase + 5]);
 
       // const c1 = new Vector3(255, 255, 255);
-      const c1 = randomRgba();
-      const c2 = randomRgba();
-      const c3 = randomRgba();
+      const c1 = randomRgb();
+      const c2 = randomRgb();
+      const c3 = randomRgb();
 
       const vx1 = new Vertex(v1, c1, uv1, n1);
       const vx2 = new Vertex(v2, c2, uv2, n2);

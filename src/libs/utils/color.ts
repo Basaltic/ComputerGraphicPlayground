@@ -28,6 +28,20 @@ export function convertRGBToHex(r: number, g: number, b: number) {
   return (r << 16) | (g << 8) | b;
 }
 
+/**
+ * 10进制hex 转换为 rgb
+ *
+ * @param hex
+ * @returns
+ */
+export function convertHexToRGB(hex: number) {
+  const r = (hex >> 16) & 0xff;
+  const g = (hex >> 8) & 0xff;
+  const b = hex & 0xff;
+
+  return new Vector3(r, g, b);
+}
+
 export function writeColor(r: number, g: number, b: number, samplesPerPixel: number = 1) {
   r /= samplesPerPixel;
   g /= samplesPerPixel;

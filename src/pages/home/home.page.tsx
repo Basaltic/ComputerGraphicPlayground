@@ -33,13 +33,16 @@ export default function HomePage() {
           <Link to="/ray-tracing-4">光线追踪渲染器4</Link>
         </List.Item>
         <List.Item>
-          <Link to="/ray-tracing-4">光线追踪渲染器5</Link>
+          <Link to="/ray-tracing-5">光线追踪渲染器5</Link>
         </List.Item>
         <List.Item>
-          <Link to="/ray-tracing-4">光线追踪渲染器6</Link>
+          <Link to="/ray-tracing-6">光线追踪渲染器6</Link>
         </List.Item>
         <List.Item>
-          <Link to="/ray-tracing-4">光线追踪渲染器7</Link>
+          <Link to="/ray-tracing-7">光线追踪渲染器7</Link>
+        </List.Item>
+        <List.Item>
+          <Link to="/ray-tracing-8">光线追踪渲染器8</Link>
         </List.Item>
       </List>
     </HomeContainer>

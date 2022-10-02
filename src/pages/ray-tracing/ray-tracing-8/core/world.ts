@@ -5,7 +5,7 @@ import { BVHNode } from './bvh';
 import { HittableList } from './hittable-list';
 import { Dielectric, Lambertian, Metal } from './material';
 import { MovingSphere, Sphere } from './sphere';
-import { CheckerTexture, SolidColor } from './texture';
+import { CheckerTexture, ImageTexture, NoiseTexture, SolidColor } from './texture';
 
 export class World extends HittableList {}
 
@@ -81,6 +81,33 @@ export function twoSphereWorld() {
 
   world.add(s1);
   world.add(s2);
+
+  return world;
+}
+
+export function twoPerlinSphereWorld() {
+  const world = new World();
+
+  const perlinTexture = new NoiseTexture();
+
+  const s1 = new Sphere(new Vector3(0, -1000, 0), 1000, Lambertian.fromTexture(perlinTexture));
+  const s2 = new Sphere(new Vector3(0, 2, 0), 2, Lambertian.fromTexture(perlinTexture));
+
+  world.add(s1);
+  world.add(s2);
+
+  return world;
+}
+
+export async function earthSphereWorld() {
+  const world = new World();
+
+  const earthTexture = await ImageTexture.fromImageUrl('http://127.0.0.1:5173/images/earthmap.png');
+  const earthSurface = Lambertian.fromTexture(earthTexture);
+
+  const earth = new Sphere(new Vector3(0, 0, 0), 2, earthSurface);
+
+  world.add(earth);
 
   return world;
 }
