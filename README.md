@@ -2,6 +2,7 @@
 
 A Personal Computer Graphic Learning Playground
 - Writing A Renderer From Scratch Using Canvas as Screen Simulator
+- Play & Learn WebGL & WebGPU
 
 
 ## Purpose of this repo
@@ -12,15 +13,14 @@ A Personal Computer Graphic Learning Playground
 ## How to Play With the Code
 
 ```
-yarn
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 ## Content
 
-- rasterization
-- ray tracing 1
-- ray tracing 2
-- ray tracing 3
-
+- Soft Renderer
+  - rasterization
+  - ray tracing
+- WebGPU Fundemental
 

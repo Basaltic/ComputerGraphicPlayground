@@ -47,3 +47,5 @@ export interface Hittable {
    */
   boundingBox(time0: number, time1: number): AABB | undefined;
 }
+
+export class Translate implements Hittable {}

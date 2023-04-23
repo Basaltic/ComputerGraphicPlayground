@@ -1,7 +1,7 @@
 import { List, Title } from '@mantine/core';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { rasterRoutes, rayTracingsRoutes, webglRoutes, webgpuRoutes, RouteObjectAdvance } from '../../app-routes';
 
 const HomeContainer = styled.div`
   padding: 12px;
@@ -10,44 +10,31 @@ const HomeContainer = styled.div`
 export default function HomePage() {
   return (
     <HomeContainer>
-      <Title order={2}>图形学游乐场（CPU模拟，基于Canvas2D的）</Title>
+      <Title order={2}>Computer Graphic Playground</Title>
 
-      <Title order={4}>光栅化</Title>
-      <List>
-        <List.Item>
-          <Link to="/rasterization">软光栅化渲染器</Link>
-        </List.Item>
-      </List>
-      <Title order={4}>光线追踪</Title>
-      <List>
-        <List.Item>
-          <Link to="/ray-tracing-1">光线追踪渲染器1</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-2">光线追踪渲染器2</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-3">光线追踪渲染器3</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-4">光线追踪渲染器4</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-5">光线追踪渲染器5</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-6">光线追踪渲染器6</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-7">光线追踪渲染器7</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-8">光线追踪渲染器8</Link>
-        </List.Item>
-        <List.Item>
-          <Link to="/ray-tracing-9">光线追踪渲染器9</Link>
-        </List.Item>
-      </List>
+      <ListBlock title="光栅化（CPU模拟，基于Canvas2D的）" name="软光栅化渲染器" routes={rasterRoutes} />
+      <ListBlock title="光线追踪（CPU模拟，基于Canvas2D的）" name="光线追踪渲染器" routes={rayTracingsRoutes} />
+      <ListBlock title="WebGL" name="WebGL Fendemental" routes={webglRoutes} />
+      <ListBlock title="WebGPU" name="WebGPU Fendemental" routes={webgpuRoutes} />
     </HomeContainer>
+  );
+}
+
+function ListBlock(props: { title: string; name: string; routes: RouteObjectAdvance[] }) {
+  const { title, name, routes } = props;
+  return (
+    <>
+      <Title order={4}>{title}</Title>
+      <List>
+        {routes.map((r, i) => (
+          <List.Item>
+            <Link to={r.path || ''}>
+              {name}
+              {i + 1}
+            </Link>
+          </List.Item>
+        ))}
+      </List>
+    </>
   );
 }
