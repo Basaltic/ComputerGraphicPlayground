@@ -1,4 +1,5 @@
 import { Vector3 } from './vector3';
+import { Vector4 } from './vector4';
 
 /**
  * 矩阵 4阶
@@ -139,15 +140,13 @@ export class Matrix4 {
    * 矩阵乘以向量
    * left(matrix) * right(vector)
    */
-  multiplyVector(right: Vector3, w?: number) {
-    let res = new Vector3(0, 0, 0, 1);
+  multiplyVector(right: Vector4) {
+    let res = new Vector4(0, 0, 0, 1);
 
-    if (w == undefined) w = 1;
-
-    res.x = this.m00 * right.x + this.m01 * right.y + this.m02 * right.z + this.m03 * w;
-    res.y = this.m10 * right.x + this.m11 * right.y + this.m12 * right.z + this.m13 * w;
-    res.z = this.m20 * right.x + this.m21 * right.y + this.m22 * right.z + this.m23 * w;
-    res.w = this.m30 * right.x + this.m31 * right.y + this.m32 * right.z + this.m33 * w;
+    res.x = this.m00 * right.x + this.m01 * right.y + this.m02 * right.z + this.m03 * right.w;
+    res.y = this.m10 * right.x + this.m11 * right.y + this.m12 * right.z + this.m13 * right.w;
+    res.z = this.m20 * right.x + this.m21 * right.y + this.m22 * right.z + this.m23 * right.w;
+    res.w = this.m30 * right.x + this.m31 * right.y + this.m32 * right.z + this.m33 * right.w;
 
     return res;
   }

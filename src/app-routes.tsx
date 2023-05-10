@@ -1,28 +1,35 @@
 import { RouteObject, useRoutes } from 'react-router-dom';
-import HomePage from './pages/home/home.page';
-import { SimSoftRendererPage } from './pages/rasterization/page';
-import WebglPlaygroundPage2 from './pages/webgl/playground/playground2.page';
-import WebglPlayground1Page1 from './pages/webgl/playground/playground1.page';
-import WebglPlaygroundPage3 from './pages/webgl/playground/playground3/payground3.page';
-import { RayTracing1 } from './pages/ray-tracing/ray-tracing-1/page';
-import { RayTracing2 } from './pages/ray-tracing/ray-tracing-2/page';
-import { RayTracing3 } from './pages/ray-tracing/ray-tracing-3/page';
-import { RayTracing4 } from './pages/ray-tracing/ray-tracing-4/page';
-import { RayTracing5 } from './pages/ray-tracing/ray-tracing-5/page';
-import { RayTracing6 } from './pages/ray-tracing/ray-tracing-6/page';
-import { RayTracing7 } from './pages/ray-tracing/ray-tracing-7/page';
-import { RayTracing8 } from './pages/ray-tracing/ray-tracing-8/page';
-import { RayTracing9 } from './pages/ray-tracing/ray-tracing-9/page';
-import { WebGPUFundemental1DrawBasicTrianlge } from './pages/webgpu/fundemental_1_basic_triangle';
-import { TestPage } from './pages/test/test-page';
-import { WebGPUFundemental1SimpleComputationInGPU } from './pages/webgpu/fundemental_2_computation';
+import HomePage from './features/home/home.page';
+
+import { TestPage } from './features/test/test-page';
+
+import WebglPlaygroundPage2 from './features/webgl/playground/playground2.page';
+import WebglPlayground1Page1 from './features/webgl/playground/playground1.page';
+import WebglPlaygroundPage3 from './features/webgl/playground/playground3/payground3.page';
+import { RayTracing1 } from './features/ray-tracing/ray-tracing-1/page';
+import { RayTracing2 } from './features/ray-tracing/ray-tracing-2/page';
+import { RayTracing3 } from './features/ray-tracing/ray-tracing-3/page';
+import { RayTracing4 } from './features/ray-tracing/ray-tracing-4/page';
+import { RayTracing5 } from './features/ray-tracing/ray-tracing-5/page';
+import { RayTracing6 } from './features/ray-tracing/ray-tracing-6/page';
+import { RayTracing7 } from './features/ray-tracing/ray-tracing-7/page';
+import { RayTracing8 } from './features/ray-tracing/ray-tracing-8/page';
+import { RayTracing9 } from './features/ray-tracing/ray-tracing-9/page';
+import { WebGPUFundemental1DrawBasicTrianlge } from './features/webgpu/rendering/basic-triangle';
+import { WebGPUFundemental1SimpleComputationInGPU } from './features/webgpu/computation/basic-computation';
+
+import { SimSoftRendererPage1 } from './features/rasterization/raster-page-1';
+import { SimSoftRendererPage2 } from './features/rasterization/raster-page-2';
+import { SimSoftRendererPage3 } from './features/rasterization/raster-page-3';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;
 
 const home: RouteObjectAdvance = { path: '/', Component: HomePage };
-const raster: RouteObjectAdvance = { path: '/rasterization', Component: SimSoftRendererPage };
+const raster: RouteObjectAdvance = { path: '/rasterization', Component: SimSoftRendererPage1 };
+const raster2: RouteObjectAdvance = { path: '/rasterization/2', Component: SimSoftRendererPage2 };
+const raster3: RouteObjectAdvance = { path: '/rasterization/3', Component: SimSoftRendererPage3 };
 
-const ray1: RouteObjectAdvance = { name: '', path: '/ray-tracing/1', Component: RayTracing1 };
+const ray1: RouteObjectAdvance = { path: '/ray-tracing/1', Component: RayTracing1 };
 const ray2: RouteObjectAdvance = { path: '/ray-tracing/2', Component: RayTracing2 };
 const ray3: RouteObjectAdvance = { path: '/ray-tracing/3', Component: RayTracing3 };
 const ray4: RouteObjectAdvance = { path: '/ray-tracing/4', Component: RayTracing4 };
@@ -41,7 +48,7 @@ const webgpu2: RouteObjectAdvance = { path: '/webgpu/2', Component: WebGPUFundem
 
 const test: RouteObjectAdvance = { path: '/test', Component: TestPage };
 
-export const rasterRoutes = [raster];
+export const rasterRoutes = [raster, raster2, raster3];
 export const rayTracingsRoutes = [ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8, ray9];
 export const webglRoutes = [webgl1, webgl2, webgl3];
 export const webgpuRoutes = [webgpu1, webgpu2];

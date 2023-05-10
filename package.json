@@ -20,13 +20,15 @@
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
     "unplugin-obj": "^0.1.2",
-    "zustand": "^4.3.7"
+    "zustand": "^4.3.7",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
+    "@types/lodash": "4.17.7",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.23",

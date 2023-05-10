@@ -1,115 +1,128 @@
+import { Vector3 } from './vector3';
+
 /**
  * 矩阵 3阶
  */
 export class Matrix3 {
-  values: number[] = [];
+  m00: number;
+  m01: number;
+  m02: number;
+  m10: number;
+  m11: number;
+  m12: number;
+  m20: number;
+  m21: number;
+  m22: number;
 
-  constructor(values: number[]) {
-    this.values = values;
-  }
-
-  static createBy2dArray(values: number[][]) {
-    let d: number[] = [];
-    for (const v of values) {
-      d.push(...v);
-    }
-    return new Matrix3(d);
+  constructor(
+    m00: number = 1,
+    m01: number = 0,
+    m02: number = 0,
+    m10: number = 0,
+    m11: number = 1,
+    m12: number = 0,
+    m20: number = 0,
+    m21: number = 0,
+    m22: number = 1
+  ) {
+    this.m00 = m00;
+    this.m01 = m01;
+    this.m02 = m02;
+    this.m10 = m10;
+    this.m11 = m11;
+    this.m12 = m12;
+    this.m20 = m20;
+    this.m21 = m21;
+    this.m22 = m22;
   }
 
   /**
-   * 单位举证
+   * 单位矩阵
    */
   static identity() {
-    return new Matrix3([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    return new Matrix3();
+  }
+
+  static from2dArray(a: number[][]) {
+    return new Matrix3(a[0][0], a[0][1], a[0][2], a[1][0], a[1][1], a[1][2], a[2][0], a[2][1], a[2][2]);
+  }
+
+  toArray() {
+    return [this.m00, this.m01, this.m02, this.m10, this.m11, this.m12, this.m20, this.m21, this.m22];
   }
 
   /**
    * 矩阵乘法
-   * @param matrix
+   *
+   * left(当前矩阵) * right
    */
-  multiply(matrix: Matrix3) {
-    const v = multiplyMatrices(matrix.values, this.values);
-    return new Matrix3(v);
+  multiply(right: Matrix3) {
+    let res = new Matrix3();
+
+    res.m00 = this.m00 * right.m00 + this.m01 * right.m10 + this.m02 * right.m20;
+    res.m01 = this.m00 * right.m01 + this.m01 * right.m11 + this.m02 * right.m21;
+    res.m02 = this.m00 * right.m02 + this.m01 * right.m12 + this.m02 * right.m22;
+
+    res.m10 = this.m10 * right.m00 + this.m11 * right.m10 + this.m12 * right.m20;
+    res.m11 = this.m10 * right.m01 + this.m11 * right.m11 + this.m12 * right.m21;
+    res.m12 = this.m10 * right.m02 + this.m11 * right.m12 + this.m12 * right.m22;
+
+    res.m20 = this.m20 * right.m00 + this.m21 * right.m10 + this.m22 * right.m20;
+    res.m21 = this.m20 * right.m01 + this.m21 * right.m11 + this.m22 * right.m21;
+    res.m22 = this.m20 * right.m02 + this.m21 * right.m12 + this.m22 * right.m22;
+
+    return res;
   }
 
-  multiplyPoint(point: number[]): number[] {
-    const v = multiplyMatrixAndPoint(this.values, point);
-    return v;
+  /**
+   * 矩阵乘以向量
+   *
+   * left(matrix) * right(vector)
+   */
+  multiplyVector(right: Vector3) {
+    let res = new Vector3(0, 0, 0);
+
+    res.x = this.m00 * right.x + this.m01 * right.y + this.m02 * right.z;
+    res.y = this.m10 * right.x + this.m11 * right.y + this.m12 * right.z;
+    res.z = this.m20 * right.x + this.m21 * right.y + this.m22 * right.z;
+
+    return res;
   }
-}
 
-// point • matrix
-function multiplyMatrixAndPoint(matrix: number[], point: number[]) {
-  // Give a simple variable name to each part of the matrix, a column and row number
-  let c0r0 = matrix[0],
-    c1r0 = matrix[1],
-    c2r0 = matrix[2],
-    c3r0 = matrix[3];
-  let c0r1 = matrix[4],
-    c1r1 = matrix[5],
-    c2r1 = matrix[6],
-    c3r1 = matrix[7];
-  let c0r2 = matrix[8],
-    c1r2 = matrix[9],
-    c2r2 = matrix[10],
-    c3r2 = matrix[11];
-  let c0r3 = matrix[12],
-    c1r3 = matrix[13],
-    c2r3 = matrix[14],
-    c3r3 = matrix[15];
+  scale(x: number, y: number, z: number) {
+    if (y == undefined && z == undefined) {
+      y = x;
+      z = x;
+    }
 
-  // Now set some simple names for the point
-  let x = point[0];
-  let y = point[1];
-  let z = point[2];
-  let w = point[3];
+    let scale = new Matrix3();
+    scale.m00 = x;
+    scale.m11 = y;
+    scale.m22 = z;
 
-  // Multiply the point against each part of the 1st column, then add together
-  let resultX = x * c0r0 + y * c0r1 + z * c0r2 + w * c0r3;
+    return this.multiply(scale);
+  }
 
-  // Multiply the point against each part of the 2nd column, then add together
-  let resultY = x * c1r0 + y * c1r1 + z * c1r2 + w * c1r3;
+  rotate(x: number, y: number, z: number) {
+    const sinX = Math.sin(x);
+    const cosX = Math.cos(x);
+    const sinY = Math.sin(y);
+    const cosY = Math.cos(y);
+    const sinZ = Math.sin(z);
+    const cosZ = Math.cos(z);
 
-  // Multiply the point against each part of the 3rd column, then add together
-  let resultZ = x * c2r0 + y * c2r1 + z * c2r2 + w * c2r3;
+    let res = new Matrix3();
 
-  // Multiply the point against each part of the 4th column, then add together
-  let resultW = x * c3r0 + y * c3r1 + z * c3r2 + w * c3r3;
+    res.m00 = cosY * cosZ;
+    res.m01 = -cosY * sinZ;
+    res.m02 = sinY;
+    res.m10 = sinX * sinY * cosZ + cosX * sinZ;
+    res.m11 = -sinX * sinY * sinZ + cosX * cosZ;
+    res.m12 = -sinX * cosY;
+    res.m20 = -cosX * sinY * cosZ + sinX * sinZ;
+    res.m21 = cosX * sinY * sinZ + sinX * cosZ;
+    res.m22 = cosX * cosY;
 
-  return [resultX, resultY, resultZ, resultW];
-}
-
-//matrixB • matrixA
-function multiplyMatrices(matrixA: number[], matrixB: number[]) {
-  // Slice the second matrix up into rows
-  let row0 = [matrixB[0], matrixB[1], matrixB[2], matrixB[3]];
-  let row1 = [matrixB[4], matrixB[5], matrixB[6], matrixB[7]];
-  let row2 = [matrixB[8], matrixB[9], matrixB[10], matrixB[11]];
-  let row3 = [matrixB[12], matrixB[13], matrixB[14], matrixB[15]];
-
-  // Multiply each row by matrixA
-  let result0 = multiplyMatrixAndPoint(matrixA, row0);
-  let result1 = multiplyMatrixAndPoint(matrixA, row1);
-  let result2 = multiplyMatrixAndPoint(matrixA, row2);
-  let result3 = multiplyMatrixAndPoint(matrixA, row3);
-
-  // Turn the result rows back into a single matrix
-  return [
-    result0[0],
-    result0[1],
-    result0[2],
-    result0[3],
-    result1[0],
-    result1[1],
-    result1[2],
-    result1[3],
-    result2[0],
-    result2[1],
-    result2[2],
-    result2[3],
-    result3[0],
-    result3[1],
-    result3[2],
-    result3[3]
-  ];
+    return this.multiply(res);
+  }
 }

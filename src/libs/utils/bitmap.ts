@@ -100,7 +100,6 @@ export class Bitmap {
         const b = imageData.data[(x + y * width) * 4 + 2];
 
         const color = (r << 16) | (g << 8) | b;
-        // console.log(x, y, color);
         bitmap.set(x, y, color);
       }
     }

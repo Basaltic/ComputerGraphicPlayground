@@ -8,17 +8,15 @@ export class Vector3 {
   x: number;
   y: number;
   z: number;
-  w: number;
 
-  constructor(x: number, y: number, z: number, w?: number) {
+  constructor(x: number, y: number, z: number) {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.w = w || 1;
   }
 
   get values() {
-    return [this.x, this.y, this.z, this.w];
+    return [this.x, this.y, this.z];
   }
 
   clone() {
@@ -29,7 +27,6 @@ export class Vector3 {
     this.x = v.x;
     this.y = v.y;
     this.z = v.z;
-    this.w = v.w;
   }
 
   /**
@@ -95,17 +92,18 @@ export class Vector3 {
   }
 
   /**
-   * 加向量
+   * 加
    */
   add(v: Vector3) {
     return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z);
   }
 
   /**
-   * 减向量
+   * 减
+   *
    * @param v
    */
-  sub(v: Vector3) {
+  subtract(v: Vector3) {
     return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z);
   }
 
@@ -113,7 +111,7 @@ export class Vector3 {
    * 反射
    */
   reflect(n: Vector3) {
-    return this.sub(n.multiply(2 * this.dot(n)));
+    return this.subtract(n.multiply(2 * this.dot(n)));
   }
 
   /**
@@ -132,17 +130,10 @@ export class Vector3 {
   }
 
   /**
-   * 转换为齐次坐标4阶向量
-   */
-  toHomoVec4() {
-    return Vector4.fromArray([this.x, this.y, this.z, 1]);
-  }
-
-  /**
    * 转换成4阶向量
    */
-  toVector4(): Vector4 {
-    return Vector4.fromArray([this.x, this.y, this.z, 1]);
+  toVector4(w: number = 1): Vector4 {
+    return new Vector4(this.x, this.y, this.z, w);
   }
 
   /**
@@ -204,7 +195,7 @@ export class Vector3 {
    * @param n 法线
    */
   static reflect(v: Vector3, n: Vector3) {
-    return v.sub(n.multiply(2 * v.dot(n)));
+    return v.subtract(n.multiply(2 * v.dot(n)));
   }
 
   /**
