@@ -13,9 +13,9 @@ import { RayTracing6 } from './pages/ray-tracing/ray-tracing-6/page';
 import { RayTracing7 } from './pages/ray-tracing/ray-tracing-7/page';
 import { RayTracing8 } from './pages/ray-tracing/ray-tracing-8/page';
 import { RayTracing9 } from './pages/ray-tracing/ray-tracing-9/page';
-import { WebGPUFundemental1DrawBasicTrianlge } from './pages/webgpu/fundemental_1_basic_triangle';
+import { WebGPUFundemental1DrawBasicTrianlge } from './pages/webgpu/rendering/basic-triangle';
 import { TestPage } from './pages/test/test-page';
-import { WebGPUFundemental1SimpleComputationInGPU } from './pages/webgpu/fundemental_2_computation';
+import { WebGPUFundemental1SimpleComputationInGPU } from './pages/webgpu/computation/basic-computation';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;
 
