@@ -21,6 +21,7 @@ import { WebGPUFundemental1SimpleComputationInGPU } from './features/webgpu/comp
 import { SimSoftRendererPage1 } from './features/rasterization/raster-page-1';
 import { SimSoftRendererPage2 } from './features/rasterization/raster-page-2';
 import { SimSoftRendererPage3 } from './features/rasterization/raster-page-3';
+import { PixiBasic1Page } from './features/pixjs/features/basic/basic-1.page';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;
 
@@ -48,13 +49,23 @@ const webgpu2: RouteObjectAdvance = { path: '/webgpu/2', Component: WebGPUFundem
 
 const test: RouteObjectAdvance = { path: '/test', Component: TestPage };
 
+const pixi1: RouteObjectAdvance = { path: '/pixi/1', Component: PixiBasic1Page };
+
 export const rasterRoutes = [raster, raster2, raster3];
 export const rayTracingsRoutes = [ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8, ray9];
 export const webglRoutes = [webgl1, webgl2, webgl3];
 export const webgpuRoutes = [webgpu1, webgpu2];
 export const otherRoutes = [home, test];
+export const pixiRoutes = [pixi1];
 
-export const routes: RouteObject[] = [...otherRoutes, ...rasterRoutes, ...rayTracingsRoutes, ...webglRoutes, ...webgpuRoutes];
+export const routes: RouteObject[] = [
+  ...otherRoutes,
+  ...rasterRoutes,
+  ...rayTracingsRoutes,
+  ...webglRoutes,
+  ...webgpuRoutes,
+  ...pixiRoutes
+];
 
 export const AppRouter = () => {
   const routeElement = useRoutes(routes);

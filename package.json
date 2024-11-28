@@ -21,7 +21,10 @@
     "react-router-dom": "^6.10.0",
     "unplugin-obj": "^0.1.2",
     "zustand": "^4.3.7",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "pixi.js": "8.4.0",
+    "@pixi/tilemap": "5.0.1",
+    "@pixi/devtools": "2.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
