@@ -1,15 +1,15 @@
 import { Vector3 } from '../../../../libs/math/vector3';
-import { Color } from '../../../../libs/utils/color';
+import { RGBColor } from '../../../../libs/utils/color';
 
 export interface Texture {
   value(u: number, v: number, p: Vector3): Vector3;
 }
 
 export class SolidColor implements Texture {
-  color: Color;
+  color: RGBColor;
 
   constructor(rgb: Vector3) {
-    this.color = rgb as Color;
+    this.color = rgb as RGBColor;
   }
 
   value(u: number, v: number, p: Vector3): Vector3 {

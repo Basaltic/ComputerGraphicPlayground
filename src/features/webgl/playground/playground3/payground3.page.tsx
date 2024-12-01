@@ -9,7 +9,7 @@ let program: any;
 /**
  * WebGL 随便尝试、玩耍的地方
  */
-export default function WebglPlaygroundPage3() {
+export function WebglPlaygroundPage3() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useMount(() => {

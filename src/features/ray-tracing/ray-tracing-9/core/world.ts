@@ -1,5 +1,5 @@
 import { Vector3 } from '../../../../libs/math/vector3';
-import { Color } from '../../../../libs/utils/color';
+import { RGBColor } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { XYRect, XZRect, YZRect } from './aarect';
 import { Box } from './box';
@@ -32,7 +32,7 @@ export function randomWorld(): World {
       if (limitRadius > 0.9) {
         if (chooseMat < 0.8) {
           // 漫反射材质 diffuse
-          const albedo = Color.random().multiply(Color.random()) as Color;
+          const albedo = RGBColor.random().multiply(RGBColor.random()) as RGBColor;
           const mat = Lambertian.fromColor(albedo);
           const center2 = center.add(new Vector3(0, randomNum(0, 0.5), 0));
 
@@ -40,7 +40,7 @@ export function randomWorld(): World {
           world.add(sphere);
         } else if (chooseMat < 0.95) {
           // 金属材质 metal
-          const albedo = Color.random(0.5, 1) as Color;
+          const albedo = RGBColor.random(0.5, 1) as RGBColor;
           const fuzz = randomNum(0, 0.5);
           const mat = new Metal(albedo, fuzz);
           const sphere = new Sphere(center, 0.2, mat);
@@ -58,10 +58,10 @@ export function randomWorld(): World {
   const mat1 = new Dielectric(1.5);
   const sph1 = new Sphere(new Vector3(0, 1, 0), 1, mat1);
 
-  const mat2 = Lambertian.fromColor(new Color(0.4, 0.2, 0, 1));
+  const mat2 = Lambertian.fromColor(new RGBColor(0.4, 0.2, 0, 1));
   const sph2 = new Sphere(new Vector3(-4, 1, 0), 1, mat2);
 
-  const mat3 = new Metal(new Color(0.7, 0.6, 0.5), 0);
+  const mat3 = new Metal(new RGBColor(0.7, 0.6, 0.5), 0);
   const sph3 = new Sphere(new Vector3(4, 1, 0), 1, mat3);
 
   world.add(sph1);
@@ -125,7 +125,7 @@ export function simpleLightWorld() {
   world.add(s1);
   world.add(s2);
 
-  const diffLight = new DiffuseLight(new Color(4, 4, 4));
+  const diffLight = new DiffuseLight(new RGBColor(4, 4, 4));
   const xyrect = new XYRect(3, 5, 1, 3, -2, diffLight);
 
   world.add(xyrect);
@@ -136,10 +136,10 @@ export function simpleLightWorld() {
 export function cornellBoxWorld() {
   const world = new World();
 
-  const red = Lambertian.fromColor(new Color(0.65, 0.05, 0.05));
-  const white = Lambertian.fromColor(new Color(0.73, 0.73, 0.73));
-  const green = Lambertian.fromColor(new Color(0.12, 0.45, 0.15));
-  const light = new DiffuseLight(new Color(15, 15, 15));
+  const red = Lambertian.fromColor(new RGBColor(0.65, 0.05, 0.05));
+  const white = Lambertian.fromColor(new RGBColor(0.73, 0.73, 0.73));
+  const green = Lambertian.fromColor(new RGBColor(0.12, 0.45, 0.15));
+  const light = new DiffuseLight(new RGBColor(15, 15, 15));
 
   world.add(new YZRect(0, 555, 0, 555, 555, green));
   world.add(new YZRect(0, 555, 0, 555, 0, green));

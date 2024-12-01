@@ -1,5 +1,17 @@
 import { Vector3 } from '../../../libs/math/vector3';
 
+export type CameraState = {
+  rotate: { rz: number; ry: number; rx: number };
+  translate: { tx: number; ty: number; tz: number };
+  scale: { sx: number; sy: number; sz: number };
+};
+
+const DEFAULT_CAMERA_STATE = {
+  rotate: { rx: 0, ry: 0, rz: 0 },
+  translate: { tx: 0, ty: 0, tz: 0 },
+  scale: { sx: 1, sy: 1, sz: 1 }
+};
+
 /**
  * 摄像机
  */
@@ -20,6 +32,7 @@ export class Camera {
   znear: number = -1;
   // 远平面
   zfar: number = -50;
+  state: CameraState;
 
   constructor(
     eye: Vector3 = new Vector3(0, 0, 10),
@@ -28,7 +41,8 @@ export class Camera {
     aspect: number = 1,
     fovy: number = 45,
     znear: number = -1,
-    zfar: number = -50
+    zfar: number = -50,
+    state: CameraState = DEFAULT_CAMERA_STATE
   ) {
     this.eye = eye;
     this.target = target;
@@ -37,5 +51,6 @@ export class Camera {
     this.fovy = fovy;
     this.zfar = zfar;
     this.znear = znear;
+    this.state = state;
   }
 }

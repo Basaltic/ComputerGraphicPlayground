@@ -1,11 +1,9 @@
 import { RouteObject, useRoutes } from 'react-router-dom';
-import HomePage from './features/home/home.page';
+import { HomePage } from './features/home/home.page';
 
-import { TestPage } from './features/test/test-page';
-
-import WebglPlaygroundPage2 from './features/webgl/playground/playground2.page';
-import WebglPlayground1Page1 from './features/webgl/playground/playground1.page';
-import WebglPlaygroundPage3 from './features/webgl/playground/playground3/payground3.page';
+import { WebglPlaygroundPage1 } from './features/webgl/playground/playground1.page';
+import { WebglPlaygroundPage2 } from './features/webgl/playground/playground2.page';
+import { WebglPlaygroundPage3 } from './features/webgl/playground/playground3/payground3.page';
 import { RayTracing1 } from './features/ray-tracing/ray-tracing-1/page';
 import { RayTracing2 } from './features/ray-tracing/ray-tracing-2/page';
 import { RayTracing3 } from './features/ray-tracing/ray-tracing-3/page';
@@ -18,9 +16,9 @@ import { RayTracing9 } from './features/ray-tracing/ray-tracing-9/page';
 import { WebGPUFundemental1DrawBasicTrianlge } from './features/webgpu/rendering/basic-triangle';
 import { WebGPUFundemental1SimpleComputationInGPU } from './features/webgpu/computation/basic-computation';
 
-import { SimSoftRendererPage1 } from './features/rasterization/raster-page-1';
-import { SimSoftRendererPage2 } from './features/rasterization/raster-page-2';
-import { SimSoftRendererPage3 } from './features/rasterization/raster-page-3';
+import { SimSoftRendererPage1 } from './features/software-rasterier-engine/raster-page-1';
+import { SimSoftRendererPage2 } from './features/software-rasterier-engine/raster-page-2';
+import { SimSoftRendererPage3 } from './features/software-rasterier-engine/raster-page-3';
 import { PixiBasic1Page } from './features/pixjs/features/basic/basic-1.page';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;
@@ -40,14 +38,12 @@ const ray7: RouteObjectAdvance = { path: '/ray-tracing/7', Component: RayTracing
 const ray8: RouteObjectAdvance = { path: '/ray-tracing/8', Component: RayTracing8 };
 const ray9: RouteObjectAdvance = { path: '/ray-tracing/9', Component: RayTracing9 };
 
-const webgl1: RouteObjectAdvance = { path: '/webgl/1', Component: WebglPlayground1Page1 };
+const webgl1: RouteObjectAdvance = { path: '/webgl/1', Component: WebglPlaygroundPage1 };
 const webgl2: RouteObjectAdvance = { path: '/webgl/2', Component: WebglPlaygroundPage2 };
 const webgl3: RouteObjectAdvance = { path: '/webgl/3', Component: WebglPlaygroundPage3 };
 
 const webgpu1: RouteObjectAdvance = { path: '/webgpu/1', Component: WebGPUFundemental1DrawBasicTrianlge };
 const webgpu2: RouteObjectAdvance = { path: '/webgpu/2', Component: WebGPUFundemental1SimpleComputationInGPU };
-
-const test: RouteObjectAdvance = { path: '/test', Component: TestPage };
 
 const pixi1: RouteObjectAdvance = { path: '/pixi/1', Component: PixiBasic1Page };
 
@@ -55,17 +51,9 @@ export const rasterRoutes = [raster, raster2, raster3];
 export const rayTracingsRoutes = [ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8, ray9];
 export const webglRoutes = [webgl1, webgl2, webgl3];
 export const webgpuRoutes = [webgpu1, webgpu2];
-export const otherRoutes = [home, test];
 export const pixiRoutes = [pixi1];
 
-export const routes: RouteObject[] = [
-  ...otherRoutes,
-  ...rasterRoutes,
-  ...rayTracingsRoutes,
-  ...webglRoutes,
-  ...webgpuRoutes,
-  ...pixiRoutes
-];
+export const routes: RouteObject[] = [home, ...rasterRoutes, ...rayTracingsRoutes, ...webglRoutes, ...webgpuRoutes, ...pixiRoutes];
 
 export const AppRouter = () => {
   const routeElement = useRoutes(routes);

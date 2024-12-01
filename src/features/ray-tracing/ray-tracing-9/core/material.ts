@@ -1,5 +1,5 @@
 import { Vector3 } from '../../../../libs/math/vector3';
-import { Color } from '../../../../libs/utils/color';
+import { RGBColor } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { HitRecord } from './hittable';
 import { Ray } from './ray';
@@ -16,10 +16,10 @@ export abstract class Material {
    * @param attenuation 衰减
    * @param scattered
    */
-  abstract scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray];
+  abstract scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray];
 
   emitted(u: number, v: number, p: Vector3): Vector3 {
-    return new Color(0, 0, 0);
+    return new RGBColor(0, 0, 0);
   }
 }
 
@@ -38,12 +38,12 @@ export class Lambertian extends Material {
     return new Lambertian(t);
   }
 
-  static fromColor(c: Color) {
+  static fromColor(c: RGBColor) {
     const t = new SolidColor(c);
     return new Lambertian(t);
   }
 
-  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray] {
+  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray] {
     let scatterDirection = hitRecord.normal.add(Vector3.randomUnitVector3());
 
     if (scatterDirection.nearZero()) {
@@ -51,7 +51,7 @@ export class Lambertian extends Material {
     }
 
     const scattered = new Ray(hitRecord.p, scatterDirection, rayIn.time);
-    const attenuation = this.albedo.value(hitRecord.u, hitRecord.v, hitRecord.p) as Color;
+    const attenuation = this.albedo.value(hitRecord.u, hitRecord.v, hitRecord.p) as RGBColor;
     return [true, attenuation, scattered];
   }
 }
@@ -60,19 +60,19 @@ export class Lambertian extends Material {
  * 金属材质
  */
 export class Metal extends Material {
-  albedo: Color;
+  albedo: RGBColor;
   /**
    * 模糊度
    */
   fuzz: number;
 
-  constructor(c: Color, fuzz: number = 1) {
+  constructor(c: RGBColor, fuzz: number = 1) {
     super();
     this.albedo = c;
     this.fuzz = fuzz < 1 ? fuzz : 1;
   }
 
-  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray] {
+  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray] {
     let reflected = Vector3.reflect(rayIn.direction.normalized(), hitRecord.normal);
     // 给反射光线添加一定的随机的偏移，这样就不是全反射了
     reflected = reflected.add(Vector3.randomInUnitSphere().multiply(this.fuzz));
@@ -89,14 +89,14 @@ export class Metal extends Material {
  * 镜面材质
  */
 export class Mirror extends Material {
-  albedo: Color;
+  albedo: RGBColor;
 
-  constructor(c: Color) {
+  constructor(c: RGBColor) {
     super();
     this.albedo = c;
   }
 
-  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray] {
+  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray] {
     let reflected = Vector3.reflect(rayIn.direction.normalized(), hitRecord.normal);
     const scattered = new Ray(hitRecord.p, reflected, rayIn.time);
     const attenuation = this.albedo;
@@ -124,8 +124,8 @@ export class Dielectric extends Material {
     this.ir = ir;
   }
 
-  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray] {
-    const attenuation = new Color(1, 1, 1);
+  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray] {
+    const attenuation = new RGBColor(1, 1, 1);
 
     const refractionRatio = hitRecord.frontFace ? 1 / this.ir : this.ir;
 
@@ -182,8 +182,8 @@ export class DiffuseLight extends Material {
     }
   }
 
-  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, Color, Ray] {
-    return [false, new Color(0, 0, 0), rayIn];
+  scatter(rayIn: Ray, hitRecord: HitRecord): [boolean, RGBColor, Ray] {
+    return [false, new RGBColor(0, 0, 0), rayIn];
   }
 
   emitted(u: number, v: number, p: Vector3): Vector3 {

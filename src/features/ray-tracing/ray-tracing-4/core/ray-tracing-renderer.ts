@@ -1,7 +1,7 @@
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
-import { Color, convertRGBToHex, writeColor } from '../../../../libs/utils/color';
+import { RGBColor, convertRGBToHex, convertRGBToHexWithGammaCorrection } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
@@ -39,10 +39,10 @@ export class RayTracingRenderer {
 
     // 2. 世界场景
     const world = new HittableList();
-    const materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
-    const materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
+    const materialGround = new Lambertian(new RGBColor(0.8, 0.8, 0.0));
+    const materialCenter = new Lambertian(new RGBColor(0.1, 0.2, 0.5));
     const materialLeft = new Dielectric(2.0);
-    const materialRight = new Metal(new Color(0.8, 0.6, 0.2), 0.0);
+    const materialRight = new Metal(new RGBColor(0.8, 0.6, 0.2), 0.0);
 
     world.add(new Sphere(new Vector3(0, -100.5, -1), 100, materialGround));
     world.add(new Sphere(new Vector3(-1, 0, -1), 0.5, materialLeft));
@@ -75,7 +75,7 @@ export class RayTracingRenderer {
           color = color.add(samplePixelColor);
         }
 
-        const colorHex = writeColor(color.x, color.y, color.z, samplesPerPixel);
+        const colorHex = convertRGBToHexWithGammaCorrection(color.x, color.y, color.z, samplesPerPixel);
         bitmap.set(i, height - j - 1, colorHex);
       }
     }
@@ -93,7 +93,7 @@ function rayColor(ray: Ray, world: Hittable, depth: number): Vector3 {
 
   // 限制光线折射的次数
   if (depth <= 0) {
-    return new Color(0, 0, 0);
+    return new RGBColor(0, 0, 0);
   }
 
   // 0.001 是为了浮点数精度的原因，会导致后续计算某些情况下 t < 0的情况出现导致结果不够精准
@@ -104,7 +104,7 @@ function rayColor(ray: Ray, world: Hittable, depth: number): Vector3 {
       return c;
     }
 
-    return new Color(0, 0, 0);
+    return new RGBColor(0, 0, 0);
   }
 
   // 这里简单的生成逻辑，后续会改为通过相交物体的颜色来确定

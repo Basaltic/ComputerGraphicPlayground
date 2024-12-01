@@ -1,5 +1,5 @@
 import { Vector3 } from '../../../../libs/math/vector3';
-import { Color } from '../../../../libs/utils/color';
+import { RGBColor } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { BVHNode } from './bvh';
 import { HittableList } from './hittable-list';
@@ -30,7 +30,7 @@ export function randomWorld(): World {
       if (limitRadius > 0.9) {
         if (chooseMat < 0.8) {
           // 漫反射材质 diffuse
-          const albedo = Color.random().multiply(Color.random()) as Color;
+          const albedo = RGBColor.random().multiply(RGBColor.random()) as RGBColor;
           const mat = Lambertian.fromColor(albedo);
           const center2 = center.add(new Vector3(0, randomNum(0, 0.5), 0));
 
@@ -38,7 +38,7 @@ export function randomWorld(): World {
           world.add(sphere);
         } else if (chooseMat < 0.95) {
           // 金属材质 metal
-          const albedo = Color.random(0.5, 1) as Color;
+          const albedo = RGBColor.random(0.5, 1) as RGBColor;
           const fuzz = randomNum(0, 0.5);
           const mat = new Metal(albedo, fuzz);
           const sphere = new Sphere(center, 0.2, mat);
@@ -56,10 +56,10 @@ export function randomWorld(): World {
   const mat1 = new Dielectric(1.5);
   const sph1 = new Sphere(new Vector3(0, 1, 0), 1, mat1);
 
-  const mat2 = Lambertian.fromColor(new Color(0.4, 0.2, 0, 1));
+  const mat2 = Lambertian.fromColor(new RGBColor(0.4, 0.2, 0, 1));
   const sph2 = new Sphere(new Vector3(-4, 1, 0), 1, mat2);
 
-  const mat3 = new Metal(new Color(0.7, 0.6, 0.5), 0);
+  const mat3 = new Metal(new RGBColor(0.7, 0.6, 0.5), 0);
   const sph3 = new Sphere(new Vector3(4, 1, 0), 1, mat3);
 
   world.add(sph1);

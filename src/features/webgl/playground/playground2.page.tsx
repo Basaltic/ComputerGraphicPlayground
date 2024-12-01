@@ -54,7 +54,7 @@ let program: any;
 /**
  * WebGL 随便尝试、玩耍的地方
  */
-export default function WebglPlaygroundPage2() {
+export function WebglPlaygroundPage2() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useMount(() => {

@@ -1,7 +1,7 @@
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
-import { Color, writeColor } from '../../../../libs/utils/color';
+import { RGBColor, convertRGBToHexWithGammaCorrection } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
 import { HitRecord, Hittable } from './hittable';
@@ -52,7 +52,7 @@ export class RayTracingRenderer {
     let fov = 20;
     let world = new World();
 
-    let background: Color = new Color(0, 0, 0);
+    let background: RGBColor = new RGBColor(0, 0, 0);
 
     switch (worldType) {
       case 1:
@@ -66,14 +66,14 @@ export class RayTracingRenderer {
         focusDistance = 10;
         aperture = 0.1;
 
-        background = new Color(0.7, 0.8, 1);
+        background = new RGBColor(0.7, 0.8, 1);
         break;
       case 2:
         world = twoSphereWorld();
         lf = new Vector3(13, 2, 3);
         la = new Vector3(0, 0, 0);
 
-        background = new Color(0.7, 0.8, 1);
+        background = new RGBColor(0.7, 0.8, 1);
         break;
       case 3:
         world = twoPerlinSphereWorld();
@@ -81,7 +81,7 @@ export class RayTracingRenderer {
         la = new Vector3(0, 0, 0);
         fov = 20;
 
-        background = new Color(0.7, 0.8, 1);
+        background = new RGBColor(0.7, 0.8, 1);
         break;
       case 4:
         world = await earthSphereWorld();
@@ -89,11 +89,11 @@ export class RayTracingRenderer {
         la = new Vector3(0, 0, 0);
         fov = 20;
 
-        background = new Color(0.7, 0.8, 1);
+        background = new RGBColor(0.7, 0.8, 1);
         break;
       case 5:
         world = await simpleLightWorld();
-        background = new Color(0, 0, 0);
+        background = new RGBColor(0, 0, 0);
         samplesPerPixel = 400;
         lf = new Vector3(26, 3, 6);
         la = new Vector3(0, 2, 0);
@@ -104,7 +104,7 @@ export class RayTracingRenderer {
         world = cornellBoxWorld();
         aspectRatio = 1;
         samplesPerPixel = 20;
-        background = new Color(0, 0, 0);
+        background = new RGBColor(0, 0, 0);
         lf = new Vector3(278, 278, -800);
         la = new Vector3(278, 278, 0);
         fov = 40;
@@ -131,7 +131,7 @@ export class RayTracingRenderer {
           color = color.add(samplePixelColor);
         }
 
-        const colorHex = writeColor(color.x, color.y, color.z, samplesPerPixel);
+        const colorHex = convertRGBToHexWithGammaCorrection(color.x, color.y, color.z, samplesPerPixel);
         bitmap.set(i, height - j - 1, colorHex);
       }
     }
@@ -144,10 +144,10 @@ export class RayTracingRenderer {
 /**
  * 通过光线求交来获取颜色
  */
-function rayColor(ray: Ray, background: Color, world: Hittable, depth: number): Vector3 {
+function rayColor(ray: Ray, background: RGBColor, world: Hittable, depth: number): Vector3 {
   // 限制光线折射的次数
   if (depth <= 0) {
-    return new Color(0, 0, 0);
+    return new RGBColor(0, 0, 0);
   }
   // 0.001 是为了浮点数精度的原因，会导致后续计算某些情况下 t < 0的情况出现导致结果不够精准
   let hitRecord = world.hit(ray, 0.001, Infinity);
