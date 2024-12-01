@@ -1,10 +1,12 @@
 import { Vector3 } from '../math/vector3';
-import { clamp, randomNum } from './number';
+import { clamp } from './number';
 
 /**
- * 颜色类，其实就是向量的alias
+ * RGB Color
  */
-export class Color extends Vector3 {
+export class RGBColor extends Vector3 {
+  a: number = 1;
+
   get r() {
     return this.x;
   }
@@ -12,9 +14,32 @@ export class Color extends Vector3 {
   get g() {
     return this.y;
   }
-
   get b() {
     return this.z;
+  }
+
+  constructor(r: number, g: number, b: number, a = 1) {
+    super(r, g, b);
+
+    this.a = a;
+  }
+
+  toHex(samplesPerPixel: number = 1) {
+    return convertRGBToHexWithGammaCorrection(this.r, this.g, this.b, samplesPerPixel);
+  }
+
+  static fromVector3(v: Vector3) {
+    return new RGBColor(v.x, v.y, v.z);
+  }
+
+  static random() {
+    const round = Math.round;
+    const rand = Math.random;
+    const s = 255;
+    const r = round(rand() * s);
+    const g = round(rand() * s);
+    const b = round(rand() * s);
+    return new RGBColor(r, g, b);
   }
 }
 
@@ -42,7 +67,7 @@ export function convertHexToRGB(hex: number) {
   return new Vector3(r, g, b);
 }
 
-export function writeColor(r: number, g: number, b: number, samplesPerPixel: number = 1) {
+export function convertRGBToHexWithGammaCorrection(r: number, g: number, b: number, samplesPerPixel: number = 1) {
   r /= samplesPerPixel;
   g /= samplesPerPixel;
   b /= samplesPerPixel;
@@ -59,5 +84,6 @@ export function writeColor(r: number, g: number, b: number, samplesPerPixel: num
   r *= 256;
   g *= 256;
   b *= 256;
+
   return convertRGBToHex(r, g, b);
 }

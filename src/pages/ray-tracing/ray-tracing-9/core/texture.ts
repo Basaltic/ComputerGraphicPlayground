@@ -1,6 +1,6 @@
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
-import { Color, convertHexToRGB } from '../../../../libs/utils/color';
+import { RGBColor, convertHexToRGB } from '../../../../libs/utils/color';
 import { clamp } from '../../../../libs/utils/number';
 import { Perlin } from './perlin';
 
@@ -12,14 +12,14 @@ export interface Texture {
  * 单色
  */
 export class SolidColor implements Texture {
-  color: Color;
+  color: RGBColor;
 
   constructor(rgb: Vector3) {
-    this.color = rgb as Color;
+    this.color = RGBColor.fromVector3(rgb);
   }
 
   value(u: number, v: number, p: Vector3): Vector3 {
-    return this.color;
+    return this.color as any;
   }
 }
 
@@ -56,7 +56,7 @@ export class NoiseTexture implements Texture {
   }
 
   value(u: number, v: number, p: Vector3): Vector3 {
-    return new Color(1, 1, 1).multiply(this.noise.noise(p));
+    return new RGBColor(1, 1, 1).multiply(this.noise.noise(p));
   }
 }
 
@@ -79,7 +79,7 @@ export class ImageTexture implements Texture {
   }
 
   value(u: number, v: number, p: Vector3): Vector3 {
-    if (!this.bitmap) return new Color(0, 1, 1);
+    if (!this.bitmap) return new RGBColor(0, 1, 1);
 
     // 保证 uv 在 [0, 1] 的范围
     u = clamp(u, 0, 1);

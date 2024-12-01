@@ -43,7 +43,7 @@ const fragmentShaderSource = `
 /**
  * WebGL 随便尝试、玩耍的地方
  */
-export default function WebglPlayground1Page1() {
+export function WebglPlaygroundPage1() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useMount(() => {

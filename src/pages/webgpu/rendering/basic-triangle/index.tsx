@@ -1,12 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { notifications } from '@mantine/notifications';
 import shader from './shader.wgsl';
 
 const WIDTH = 400;
 const HEIGHT = 400;
 
 function fail(msg: string) {
-  notifications.show({ title: 'Error!', message: msg });
+  alert(msg);
 }
 
 export const WebGPUFundemental1DrawBasicTrianlge = () => {
