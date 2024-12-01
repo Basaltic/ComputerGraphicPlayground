@@ -33,9 +33,6 @@ export class Camera {
   // 远平面
   zfar: number = -50;
 
-<<<<<<<< Updated upstream:src/pages/rasterization/core/camera.ts
-  constructor(eye: Vector3, target: Vector3, up: Vector3, aspect: number = 1, fovy: number = 45, znear: number = -1, zfar: number = -50) {
-========
   state: CameraState;
 
   constructor(
@@ -48,7 +45,6 @@ export class Camera {
     zfar: number = -50,
     state: CameraState = DEFAULT_CAMERA_STATE
   ) {
->>>>>>>> Stashed changes:src/features/software-rasterier-engine/core/camera.ts
     this.eye = eye;
     this.target = target;
     this.up = up;

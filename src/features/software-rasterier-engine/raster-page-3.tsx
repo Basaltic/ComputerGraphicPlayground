@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-import { TestSceneWithModel1 } from './scenes/scene-with-model-1';
 import { downloadModels } from '../../libs/third-party/obj-loader/utils';
 import { Canvas } from '../../libs/utils/canvas';
 
