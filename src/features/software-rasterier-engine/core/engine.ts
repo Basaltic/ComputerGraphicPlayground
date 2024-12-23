@@ -28,6 +28,8 @@ export class Engine {
 
   private run() {
     this.render();
+
+    // requestAnimationFrame(this.run.bind(this));
   }
 
   private render() {
@@ -41,5 +43,7 @@ export class Engine {
 
     // - 真实的绘制到屏幕中
     this.canvas.drawImageFromBitmap(buffer);
+
+    console.log(buffer);
   }
 }

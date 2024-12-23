@@ -1,6 +1,7 @@
 import { Matrix4 } from '../../../libs/math/matrix4';
 import { Vector2 } from '../../../libs/math/vector2';
 import { Vector3 } from '../../../libs/math/vector3';
+import { RGBColor } from '../../../libs/utils/color';
 
 /**
  * 顶点
@@ -14,7 +15,7 @@ export class Vertex {
    * RGB color
    * x = r, y = z
    */
-  color: Vector3;
+  color: RGBColor;
 
   /**
    * 纹理坐标，范围 [0,1]
@@ -26,9 +27,9 @@ export class Vertex {
    */
   normal?: Vector3;
 
-  constructor(p: Vector3, c: Vector3, uv?: Vector2, normal?: Vector3) {
+  constructor(p: Vector3, color: RGBColor, uv?: Vector2, normal?: Vector3) {
     this.pos = p;
-    this.color = c;
+    this.color = color;
     this.uv = uv;
     this.normal = normal;
   }

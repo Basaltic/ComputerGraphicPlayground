@@ -28,6 +28,10 @@ export class RGBColor extends Vector3 {
     return convertRGBToHexWithGammaCorrection(this.r, this.g, this.b, samplesPerPixel);
   }
 
+  override clone() {
+    return new RGBColor(this.r, this.g, this.b, this.a);
+  }
+
   static fromVector3(v: Vector3) {
     return new RGBColor(v.x, v.y, v.z);
   }
@@ -68,22 +72,22 @@ export function convertHexToRGB(hex: number) {
 }
 
 export function convertRGBToHexWithGammaCorrection(r: number, g: number, b: number, samplesPerPixel: number = 1) {
-  r /= samplesPerPixel;
-  g /= samplesPerPixel;
-  b /= samplesPerPixel;
+  let rr = r / samplesPerPixel;
+  let gg = g / samplesPerPixel;
+  let bb = b / samplesPerPixel;
 
   // gamma校正，近似 gamma = 2.0，https://en.wikipedia.org/wiki/Gamma_correction
-  r = Math.sqrt(r);
-  g = Math.sqrt(g);
-  b = Math.sqrt(b);
+  rr = Math.sqrt(r);
+  gg = Math.sqrt(g);
+  bb = Math.sqrt(b);
 
-  r = clamp(r, 0, 0.999);
-  g = clamp(g, 0, 0.999);
-  b = clamp(b, 0, 0.999);
+  rr = clamp(r, 0, 0.999);
+  gg = clamp(g, 0, 0.999);
+  bb = clamp(b, 0, 0.999);
 
-  r *= 256;
-  g *= 256;
-  b *= 256;
+  rr *= 256;
+  gg *= 256;
+  bb *= 256;
 
   return convertRGBToHex(r, g, b);
 }

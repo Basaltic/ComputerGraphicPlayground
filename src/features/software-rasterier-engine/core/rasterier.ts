@@ -87,11 +87,12 @@ export class Rasterier {
 
       const zDepth = alpha * v0.pos.z + beta * v1.pos.z + gamma * v2.pos.z;
 
-      const r = alpha * v0.color.x + beta * v1.color.x + gamma * t.v2.color.x;
+      const r = alpha * v0.color.x + beta * v1.color.x + gamma * v2.color.x;
       const g = alpha * v0.color.y + beta * v1.color.y + gamma * v2.color.y;
       const b = alpha * v0.color.z + beta * v1.color.z + gamma * v2.color.z;
 
-      const color = new Vector3(r, g, b);
+      const color = new RGBColor(Math.ceil(r), Math.ceil(g), Math.ceil(b));
+      console.log(color, color.toHex());
 
       this.renderPixelToBuffer(new Vector3(x, y, zDepth), color);
     }
@@ -102,12 +103,13 @@ export class Rasterier {
    * @param p
    * @param c
    */
-  private renderPixelToBuffer(p: Vector3, c: Vector3) {
+  private renderPixelToBuffer(p: Vector3, c: RGBColor) {
     const oldZDepth = this.zDepthBuffer[p.x + p.y * this.width];
     if (oldZDepth === undefined || oldZDepth < p.z) {
       this.zDepthBuffer[p.x + p.y * this.width] = p.z;
-      const colorHex = RGBColor.fromVector3(c).toHex();
 
+      const colorHex = c.toHex();
+      // console.log(colorHex);
       this.frameBuffer.set(p.x, p.y, colorHex);
     }
   }
