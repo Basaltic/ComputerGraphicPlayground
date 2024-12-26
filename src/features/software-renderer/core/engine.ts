@@ -62,5 +62,11 @@ export class Engine {
     this.pixelSize = size;
     this.width = WIDTH / size;
     this.height = HEIGHT / size;
+
+    this.rasterier = new Rasterier({
+      width: this.width,
+      height: this.height,
+      camera: this.scene.camera
+    });
   }
 }

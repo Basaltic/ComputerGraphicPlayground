@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { STEP_ANGLE, STEP_SCALE, STEP_TRANSLATE } from '../util/constants';
 
 export function Controller(props: EngineType) {
-  const { run, camera } = props;
+  const { run, camera, changePixelSize } = props;
+
   return (
     <div className="ml-10 flex flex-col gap-2">
       <div>
@@ -51,7 +52,7 @@ export function Controller(props: EngineType) {
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">其他</h2>
         </div>
         <div className="flex gap-2">
-          <input type="number" placeholder="像素大小" />
+          <input type="number" placeholder="像素大小" onChange={(e) => changePixelSize(Number(e.target.value))} />
         </div>
       </div>
     </div>

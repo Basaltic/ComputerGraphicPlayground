@@ -44,7 +44,12 @@ export const useEngine = (option?: EngineOption) => {
     }
   };
 
-  return { canvasRef, engineRef, scene, camera, run };
+  const changePixelSize = (pixelSize: number) => {
+    engineRef.current?.changePixelSize(pixelSize);
+    run();
+  };
+
+  return { canvasRef, engineRef, scene, camera, run, changePixelSize };
 };
 
 export type EngineType = ReturnType<typeof useEngine>;
