@@ -16,9 +16,9 @@ import { RayTracing9 } from './features/ray-tracing/ray-tracing-9/page';
 import { WebGPUFundemental1DrawBasicTrianlge } from './features/webgpu/rendering/basic-triangle';
 import { WebGPUFundemental1SimpleComputationInGPU } from './features/webgpu/computation/basic-computation';
 
-import { SimSoftRendererPage1 } from './features/software-rasterier-engine/raster-page-1';
-import { SimSoftRendererPage2 } from './features/software-rasterier-engine/raster-page-2';
-import { SimSoftRendererPage3 } from './features/software-rasterier-engine/raster-page-3';
+import { SimSoftRendererPage1 } from './features/software-renderer/raster-page-1';
+import { SimSoftRendererPage2 } from './features/software-renderer/raster-page-2';
+import { SimSoftRendererPage3 } from './features/software-renderer/raster-page-3';
 import { PixiBasic1Page } from './features/pixjs/features/basic/basic-1.page';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;

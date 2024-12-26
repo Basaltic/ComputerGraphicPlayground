@@ -55,15 +55,16 @@ export class Rasterier {
     const { zfar, znear } = this.camera;
 
     for (const triangle of triangles) {
-      this.transformMvp(triangle, mvp);
-      this.transfromViewport(triangle, zfar, znear);
+      const clonedTriangle = triangle.clone();
+      this.transformMvp(clonedTriangle, mvp);
+      this.transfromViewport(clonedTriangle, zfar, znear);
 
       // 真实的逐像素绘制到画布中
       // TODO: MSAA
-      const { minX, maxX, minY, maxY } = triangle.getBoundingBox();
+      const { minX, maxX, minY, maxY } = clonedTriangle.getBoundingBox();
       for (let i = minX; i < maxX; i++) {
         for (let j = minY; j < maxY; j++) {
-          this.renderTrianglePixel(triangle, i, j);
+          this.renderTrianglePixel(clonedTriangle, i, j);
         }
       }
     }
@@ -92,7 +93,6 @@ export class Rasterier {
       const b = alpha * v0.color.z + beta * v1.color.z + gamma * v2.color.z;
 
       const color = new RGBColor(Math.ceil(r), Math.ceil(g), Math.ceil(b));
-      console.log(color, color.toHex());
 
       this.renderPixelToBuffer(new Vector3(x, y, zDepth), color);
     }
@@ -162,7 +162,7 @@ export class Rasterier {
    * Model-View-Projection 矩阵
    */
   private getMvp() {
-    const { eye, fovy, aspect, zfar, znear, state } = this.camera;
+    const { lookFrom: eye, fovy, aspect, zfar, znear, state } = this.camera;
 
     const { rotate, scale, translate } = state;
     const { rx, ry, rz } = rotate;

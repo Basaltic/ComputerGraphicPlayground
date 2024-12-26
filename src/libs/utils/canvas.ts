@@ -78,8 +78,8 @@ export class Canvas {
    *
    * @param bitmap
    */
-  drawImageFromBitmap(bitmap: Bitmap) {
-    const imageData = bitmap.toImageData();
+  drawImageFromBitmap(bitmap: Bitmap, pixelSize: number = 1) {
+    const imageData = bitmap.toImageData(pixelSize);
     this.drawImage(imageData);
   }
 }

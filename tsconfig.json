@@ -14,7 +14,11 @@
     "isolatedModules": false,
     "noEmit": true,
     "jsx": "react-jsx",
-    "typeRoots": [ "./node_modules/@webgpu/types", "./node_modules/@types"]
+    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["./src"],
   "files": ["./missing-types.d.ts"]
