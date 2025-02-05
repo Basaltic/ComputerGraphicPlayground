@@ -109,7 +109,6 @@ export class Rasterier {
       this.zDepthBuffer[p.x + p.y * this.width] = p.z;
 
       const colorHex = c.toHex();
-      // console.log(colorHex);
       this.frameBuffer.set(p.x, p.y, colorHex);
     }
   }

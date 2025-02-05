@@ -24,7 +24,10 @@ export class RGBColor extends Vector3 {
     this.a = a;
   }
 
-  toHex(samplesPerPixel: number = 1) {
+  toHex() {
+    return convertRGBToHex(this.r, this.g, this.b);
+  }
+  toHexWithGammaCorrectio(samplesPerPixel: number = 1) {
     return convertRGBToHexWithGammaCorrection(this.r, this.g, this.b, samplesPerPixel);
   }
 
@@ -34,6 +37,20 @@ export class RGBColor extends Vector3 {
 
   static fromVector3(v: Vector3) {
     return new RGBColor(v.x, v.y, v.z);
+  }
+
+  static random(min?: number, max?: number) {
+    return RGBColor.fromVector3(Vector3.random(min, max));
+  }
+
+  static randomColor() {
+    const round = Math.round;
+    const rand = Math.random;
+    const s = 255;
+    const r = round(rand() * s);
+    const g = round(rand() * s);
+    const b = round(rand() * s);
+    return new RGBColor(r, g, b);
   }
 }
 
@@ -62,22 +79,22 @@ export function convertRGBToHex(r: number, g: number, b: number) {
 }
 
 export function convertRGBToHexWithGammaCorrection(r: number, g: number, b: number, samplesPerPixel: number = 1) {
-  r /= samplesPerPixel;
-  g /= samplesPerPixel;
-  b /= samplesPerPixel;
+  let rr = r / samplesPerPixel;
+  let gg = g / samplesPerPixel;
+  let bb = b / samplesPerPixel;
 
   // gamma校正，近似 gamma = 2.0，https://en.wikipedia.org/wiki/Gamma_correction
-  r = Math.sqrt(r);
-  g = Math.sqrt(g);
-  b = Math.sqrt(b);
+  rr = Math.sqrt(rr);
+  gg = Math.sqrt(gg);
+  bb = Math.sqrt(bb);
 
-  r = clamp(r, 0, 0.999);
-  g = clamp(g, 0, 0.999);
-  b = clamp(b, 0, 0.999);
+  rr = clamp(rr, 0, 0.999);
+  gg = clamp(gg, 0, 0.999);
+  bb = clamp(bb, 0, 0.999);
 
-  r *= 256;
-  g *= 256;
-  b *= 256;
+  rr *= 256;
+  gg *= 256;
+  bb *= 256;
 
-  return convertRGBToHex(r, g, b);
+  return convertRGBToHex(rr, gg, bb);
 }

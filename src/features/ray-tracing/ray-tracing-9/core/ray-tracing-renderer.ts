@@ -1,10 +1,11 @@
+import { RayTracingControllerState } from '@/components/custom/ray-tracing-controller/controller';
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
 import { RGBColor, convertRGBToHexWithGammaCorrection } from '../../../../libs/utils/color';
 import { randomNum } from '../../../../libs/utils/number';
 import { Camera } from './camera';
-import { HitRecord, Hittable } from './hittable';
+import { Hittable } from './hittable';
 import { Ray } from './ray';
 import { cornellBoxWorld, earthSphereWorld, randomWorld, simpleLightWorld, twoPerlinSphereWorld, twoSphereWorld, World } from './world';
 
@@ -25,22 +26,19 @@ export class RayTracingRenderer {
   /**
    * 开始绘制
    */
-  render() {
-    this.run();
-  }
 
   /**
    * 入口
    */
-  async run() {
+  async render(state: RayTracingControllerState) {
     // 1. 屏幕定义，宽高，等其他参数定义
     const { width, height } = this.canvas;
 
     let aspectRatio = this.configs.aspectRatio;
 
-    let samplesPerPixel = 10;
+    let samplesPerPixel = state.samplesPerPixel || 10;
     // 控制光线最大的折射次数
-    const maxDepth = 50;
+    const maxDepth = state.maxDepth || 50;
 
     const worldType: number = 0;
 

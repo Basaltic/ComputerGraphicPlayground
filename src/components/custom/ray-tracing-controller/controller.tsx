@@ -7,7 +7,7 @@ export interface RayTracingControllerState {
 }
 
 export function useRayTracingController() {
-  const [state, setState] = useSetState({ samplesPerPixel: 100, maxDepth: 50 });
+  const [state, setState] = useSetState({ samplesPerPixel: 10, maxDepth: 50 });
 
   return {
     state: state,

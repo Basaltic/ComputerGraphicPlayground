@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas } from '../../../libs/utils/canvas';
 import { RayTracingRenderer } from './core/ray-tracing-renderer';
+import { useRayTracingController } from '@/components/custom/ray-tracing-controller/controller';
 
 /**
  * 光线追踪示例
@@ -9,6 +10,7 @@ import { RayTracingRenderer } from './core/ray-tracing-renderer';
  */
 export const RayTracing8 = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { state, controller } = useRayTracingController();
 
   const RATIO = 16 / 9;
 
@@ -27,7 +29,7 @@ export const RayTracing8 = () => {
     const canvasElement = canvasRef.current;
     if (canvasElement) {
       const renderer = new RayTracingRenderer(canvasElement, { aspectRatio: RATIO });
-      renderer.render();
+      renderer.render(state);
     }
   };
 
@@ -36,6 +38,7 @@ export const RayTracing8 = () => {
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} style={{ width: WIDTH, height: HEIGHT }} />
 
       <div>
+        {controller}
         <button onClick={render}>开始渲染</button>
       </div>
     </div>

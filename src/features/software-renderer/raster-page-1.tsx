@@ -19,9 +19,9 @@ export const SimSoftRendererPage1 = () => {
     const v2 = Vector3.fromArray([1, -1, -1]);
     const v3 = Vector3.fromArray([-1, -1, -1]);
 
-    const c1 = RGBColor.random();
-    const c2 = RGBColor.random();
-    const c3 = RGBColor.random();
+    const c1 = RGBColor.randomColor();
+    const c2 = RGBColor.randomColor();
+    const c3 = RGBColor.randomColor();
 
     const vx1 = new Vertex(v1, c1);
     const vx2 = new Vertex(v2, c2);

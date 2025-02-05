@@ -1,3 +1,4 @@
+import { RayTracingControllerState } from '@/components/custom/ray-tracing-controller/controller';
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
@@ -25,22 +26,22 @@ export class RayTracingRenderer {
   /**
    * 开始绘制
    */
-  render() {
-    this.run();
-  }
+  // render() {
+  //   this.run();
+  // }
 
   /**
    * 入口
    */
-  async run() {
+  async render(state: RayTracingControllerState) {
     // 1. 屏幕定义，宽高，等其他参数定义
     const { width, height } = this.canvas;
 
     const aspectRatio = this.configs.aspectRatio;
 
-    const samplesPerPixel = 10;
+    const samplesPerPixel = state.samplesPerPixel || 10;
     // 控制光线最大的折射次数
-    const maxDepth = 50;
+    const maxDepth = state.maxDepth || 50;
 
     const worldType: number = 0;
 

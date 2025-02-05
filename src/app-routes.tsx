@@ -25,7 +25,7 @@ import { PhaserExample1 } from './features/phaser/example-1';
 export type RouteObjectAdvance = { name?: string } & RouteObject;
 
 const home: RouteObjectAdvance = { path: '/', Component: HomePage };
-const raster: RouteObjectAdvance = { path: '/rasterization', Component: SimSoftRendererPage1 };
+const raster: RouteObjectAdvance = { path: '/rasterization/1', Component: SimSoftRendererPage1 };
 const raster2: RouteObjectAdvance = { path: '/rasterization/2', Component: SimSoftRendererPage2 };
 const raster3: RouteObjectAdvance = { path: '/rasterization/3', Component: SimSoftRendererPage3 };
 
