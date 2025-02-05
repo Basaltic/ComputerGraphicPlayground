@@ -32,7 +32,7 @@ export const RayTracing9 = () => {
   };
 
   return (
-    <div style={{ width: 'fit-content', margin: '10px 0px 0px 10px' }}>
+    <div className="flex gap-8 p-4 w-fit">
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} style={{ width: WIDTH, height: HEIGHT }} />
 
       <div>

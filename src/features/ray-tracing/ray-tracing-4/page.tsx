@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas } from '../../../libs/utils/canvas';
 import { RayTracingRenderer } from './core/ray-tracing-renderer';
+import { useRayTracingController } from '@/components/custom/ray-tracing-controller/controller';
 
 const WIDTH = 400;
 const HEIGHT = 225;
@@ -11,6 +12,8 @@ const HEIGHT = 225;
  */
 export const RayTracing4 = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const { state, controller } = useRayTracingController();
 
   useEffect(() => {
     const canvasElement = canvasRef.current;
@@ -23,15 +26,16 @@ export const RayTracing4 = () => {
     const canvasElement = canvasRef.current;
     if (canvasElement) {
       const renderer = new RayTracingRenderer(canvasElement);
-      renderer.render();
+      renderer.render(state);
     }
   };
 
   return (
-    <div style={{ width: 'fit-content', margin: '10px 0px 0px 10px' }}>
+    <div className="flex gap-8 p-4 w-fit">
       <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} style={{ width: WIDTH, height: HEIGHT }} />
 
       <div>
+        {controller}
         <button onClick={render}>开始渲染</button>
       </div>
     </div>

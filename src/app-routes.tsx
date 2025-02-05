@@ -20,6 +20,7 @@ import { SimSoftRendererPage1 } from './features/software-renderer/raster-page-1
 import { SimSoftRendererPage2 } from './features/software-renderer/raster-page-2';
 import { SimSoftRendererPage3 } from './features/software-renderer/raster-page-3';
 import { PixiBasic1Page } from './features/pixjs/features/basic/basic-1.page';
+import { PhaserExample1 } from './features/phaser/example-1';
 
 export type RouteObjectAdvance = { name?: string } & RouteObject;
 
@@ -47,13 +48,24 @@ const webgpu2: RouteObjectAdvance = { path: '/webgpu/2', Component: WebGPUFundem
 
 const pixi1: RouteObjectAdvance = { path: '/pixi/1', Component: PixiBasic1Page };
 
+const phaser1: RouteObjectAdvance = { path: '/phaser/1', Component: PhaserExample1 };
+
 export const rasterRoutes = [raster, raster2, raster3];
 export const rayTracingsRoutes = [ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8, ray9];
 export const webglRoutes = [webgl1, webgl2, webgl3];
 export const webgpuRoutes = [webgpu1, webgpu2];
 export const pixiRoutes = [pixi1];
+export const phaserRoutes = [phaser1];
 
-export const routes: RouteObject[] = [home, ...rasterRoutes, ...rayTracingsRoutes, ...webglRoutes, ...webgpuRoutes, ...pixiRoutes];
+export const routes: RouteObject[] = [
+  home,
+  ...rasterRoutes,
+  ...rayTracingsRoutes,
+  ...webglRoutes,
+  ...webgpuRoutes,
+  ...pixiRoutes,
+  ...phaserRoutes
+];
 
 export const AppRouter = () => {
   const routeElement = useRoutes(routes);

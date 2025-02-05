@@ -1,3 +1,4 @@
+import { RayTracingControllerState } from '@/components/custom/ray-tracing-controller/controller';
 import { Vector3 } from '../../../../libs/math/vector3';
 import { Bitmap } from '../../../../libs/utils/bitmap';
 import { Canvas } from '../../../../libs/utils/canvas';
@@ -20,19 +21,19 @@ export class RayTracingRenderer {
   /**
    * 开始绘制
    */
-  render() {
-    this.run();
+  render(state: RayTracingControllerState) {
+    this.run(state);
   }
 
   /**
    * 入口
    */
-  run() {
+  run(state: RayTracingControllerState) {
     // 屏幕定义，宽高
     const { width, height } = this.canvas;
-    const samplesPerPixel = 100;
+    const samplesPerPixel = state.samplesPerPixel || 100;
     // 控制光线最大的折射次数
-    const maxDepth = 50;
+    const maxDepth = state.maxDepth || 50;
 
     // 世界场景
     const world = new HittableList();

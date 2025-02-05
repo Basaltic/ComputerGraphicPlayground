@@ -48,16 +48,6 @@ export class RGBColor extends Vector3 {
 }
 
 /**
- * 10进制hex
- *
- * @param
- * @returns
- */
-export function convertRGBToHex(r: number, g: number, b: number) {
-  return (r << 16) | (g << 8) | b;
-}
-
-/**
  * 10进制hex 转换为 rgb
  *
  * @param hex
@@ -71,23 +61,33 @@ export function convertHexToRGB(hex: number) {
   return new Vector3(r, g, b);
 }
 
+/**
+ * 10进制hex
+ *
+ * @param
+ * @returns
+ */
+export function convertRGBToHex(r: number, g: number, b: number) {
+  return (r << 16) | (g << 8) | b;
+}
+
 export function convertRGBToHexWithGammaCorrection(r: number, g: number, b: number, samplesPerPixel: number = 1) {
-  let rr = r / samplesPerPixel;
-  let gg = g / samplesPerPixel;
-  let bb = b / samplesPerPixel;
+  r /= samplesPerPixel;
+  g /= samplesPerPixel;
+  b /= samplesPerPixel;
 
   // gamma校正，近似 gamma = 2.0，https://en.wikipedia.org/wiki/Gamma_correction
-  rr = Math.sqrt(r);
-  gg = Math.sqrt(g);
-  bb = Math.sqrt(b);
+  r = Math.sqrt(r);
+  g = Math.sqrt(g);
+  b = Math.sqrt(b);
 
-  rr = clamp(r, 0, 0.999);
-  gg = clamp(g, 0, 0.999);
-  bb = clamp(b, 0, 0.999);
+  r = clamp(r, 0, 0.999);
+  g = clamp(g, 0, 0.999);
+  b = clamp(b, 0, 0.999);
 
-  rr *= 256;
-  gg *= 256;
-  bb *= 256;
+  r *= 256;
+  g *= 256;
+  b *= 256;
 
   return convertRGBToHex(r, g, b);
 }
