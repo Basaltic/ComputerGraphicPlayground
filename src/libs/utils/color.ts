@@ -35,16 +35,6 @@ export class RGBColor extends Vector3 {
   static fromVector3(v: Vector3) {
     return new RGBColor(v.x, v.y, v.z);
   }
-
-  static random() {
-    const round = Math.round;
-    const rand = Math.random;
-    const s = 255;
-    const r = round(rand() * s);
-    const g = round(rand() * s);
-    const b = round(rand() * s);
-    return new RGBColor(r, g, b);
-  }
 }
 
 /**
